@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico"> <!-- 브라우저 탭에 표시되는 favicon을 설정. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- width=device-width → 사용자의 화면 크기에 맞춰 페이지 크기를 자동 조정. -->
+    <!-- initial-scale=1.0 → 초기 줌(확대/축소) 상태를 100%로 설정. -->
+    <title> Project </title> <!-- 웹 브라우저 탭에 표시될 페이지 제목. #추후 수정 -->
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- Vue 애플리케이션이 마운트될(root) DOM 요소. -->
+    <!-- Vue의 App.vue 컴포넌트가 이 <div id="app"> 안에 렌더링됨. -->
+    <script type="module" src="/src/main.js"></script>
+    <!-- Vue 앱의 진입점(entry point) 인 main.js 파일을 불러옴. -->
+    <!-- type="module": 최신 ES6 모듈 방식을 사용한다는 의미. -->
+    <!-- /src/main.js: Vue 애플리케이션을 실행하는 핵심 스크립트. -->
+  </body>
+</html>
+
+<!--
+vue 와 연결되는 방식
+- index.html 먼저 로드됨
+- vue 앱이 렌더링됨
+- /src/main.js 에서 vue application 을 실행하고, App.vue를 #app 에 마운트함
+* 이 파일은 vue 앱의 기본 HTML 구조이며, Vue 앱이 #app 에 렌더링되도록 준비하는 역할을 함
+-->
