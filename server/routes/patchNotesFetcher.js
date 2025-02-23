@@ -52,6 +52,8 @@ setInterval(async () => {
   console.log('패치노트가 갱신되었습니다.');
 }, 7 * 24 * 60 * 60 * 1000);  // 1주일 (7일 * 24시간 * 60분 * 60초 * 1000ms)
 
+//주석
+
 // GET 요청 처리
 router.get('/patch-notes', getPatchNotes);
 
