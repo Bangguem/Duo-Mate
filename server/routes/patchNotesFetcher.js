@@ -46,6 +46,12 @@ const getPatchNotes = async (req, res) => {
   }
 };
 
+// 1주일마다 패치노트를 갱신하는 설정 (7일마다 실행)
+setInterval(async () => {
+  await getPatchNotes();
+  console.log('패치노트가 갱신되었습니다.');
+}, 7 * 24 * 60 * 60 * 1000);  // 1주일 (7일 * 24시간 * 60분 * 60초 * 1000ms)
+
 // GET 요청 처리
 router.get('/patch-notes', getPatchNotes);
 
