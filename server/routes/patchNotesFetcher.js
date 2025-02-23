@@ -46,6 +46,9 @@ const getPatchNotes = async (req, res) => {
   }
 };
 
+
+//주석
+
 // GET 요청 처리
 router.get('/patch-notes', getPatchNotes);
 
