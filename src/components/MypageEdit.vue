@@ -118,7 +118,7 @@
        :src="require(`@/assets/Mastery/${userInfo.top5Champions[1]?.masteryLevel}.webp`)" 
        class="mastery-icon"
        alt="Mastery Level" />
-       <img v-if="(userInfo.top5Champions || [])[1]?.iconUrl && (userInfo.top5Champions || [])[1]?.masteryLevel >= 10"
+       <img v-if="(userInfo.top5Champions || [])[0]?.iconUrl && (userInfo.top5Champions || [])[0]?.masteryLevel >= 10"
        src="@/assets/Mastery/10.webp" 
        class="mastery-icon"
        alt="Mastery Level" />
@@ -138,7 +138,7 @@
        :src="require(`@/assets/Mastery/${userInfo.top5Champions[2]?.masteryLevel}.webp`)" 
        class="mastery-icon"
        alt="Mastery Level" />
-       <img v-if="(userInfo.top5Champions || [])[1]?.iconUrl && (userInfo.top5Champions || [])[1]?.masteryLevel >= 10" 
+       <img v-if="(userInfo.top5Champions || [])[2]?.iconUrl && (userInfo.top5Champions || [])[2]?.masteryLevel >= 10" 
        src="@/assets/Mastery/10.webp" 
        class="mastery-icon"
        alt="Mastery Level" />
