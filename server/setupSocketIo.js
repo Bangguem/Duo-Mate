@@ -85,15 +85,15 @@ const setupSocketIo = (server) => {
                     return false;
                 }
 
-                const tier1 = player.user.summonerRank.tier;
-                const tier2 = entry.user.summonerRank.tier;
+                const tier1 = player.user.summonerRank[0].tier;
+                const tier2 = entry.user.summonerRank[0].tier;
 
 
                 // 에메랄드나 다이아몬드인 경우
                 if (tier1.includes('EMERALD') || tier1.includes('DIAMOND') ||
                     tier2.includes('EMERALD') || tier2.includes('DIAMOND')) {
-                    const key1 = `${tier1} ${player.user.summonerRank.rank}`;
-                    const key2 = `${tier2} ${entry.user.summonerRank.rank}`;
+                    const key1 = `${tier1} ${player.user.summonerRank[0].rank}`;
+                    const key2 = `${tier2} ${entry.user.summonerRank[0].rank}`;
                     return duoRestrictions[key1]?.includes(key2) || duoRestrictions[key2]?.includes(key1);
                 }
 
@@ -149,21 +149,28 @@ const setupSocketIo = (server) => {
                             nickname: player1.user.nickname,
                             position: player1.user.position,
                             microphone: player1.user.microphone,
+                            SummonerName: player1.user.SummonerName,
+                            Tag: player1.user.Tag,
                             socketId: player1.socket.id,
                             accepted: false,
-                            tier: player1.user.summonerRank.tier,
-                            summonerRank: player1.user.summonerRank,
-
+                            tier: player1.user.summonerRank[0].tier,
+                            summonerRank: player1.user.summonerRank[0],
+                            summonerInfo: player1.user.summonerInfo,
+                            top5Champions: player1.user.top5Champions
                         },
                         {
                             userid: player2.user.userid,
                             nickname: player2.user.nickname,
                             position: player2.user.position,
                             microphone: player2.user.microphone,
+                            SummonerName: player2.user.SummonerName,
+                            Tag: player2.user.Tag,
                             socketId: player2.socket.id,
                             accepted: false,
-                            tier: player2.user.summonerRank.tier,
-                            summonerRank: player2.user.summonerRank,
+                            tier: player2.user.summonerRank[0].tier,
+                            summonerRank: player2.user.summonerRank[0],
+                            summonerInfo: player2.user.summonerInfo,
+                            top5Champions: player2.user.top5Champions
                         }
                     ]
                 };
@@ -174,7 +181,7 @@ const setupSocketIo = (server) => {
                 player1.socket.emit('matchSuccess', { matchId });
                 player2.socket.emit('matchSuccess', { matchId });
 
-                console.log(`✅ 매칭 성공: ${player1.user.nickname}(${player1.user.summonerRank.tier}) - ${player2.user.nickname}(${player2.user.summonerRank.tier})`);
+                console.log(`✅ 매칭 성공: ${player1.user.nickname}(${player1.user.summonerRank[0].tier}) - ${player2.user.nickname}(${player2.user.summonerRank[0].tier})`);
 
                 processed.add(i);
                 processed.add(this.queue.indexOf(player2));
@@ -232,9 +239,8 @@ const setupSocketIo = (server) => {
             console.log(`📊 방 ${roomName}의 현재 사용자 수: ${room ? room.size : 0}`);
         });
 
-        socket.on("chat message", ({ matchId, message }) => {
+        socket.on("chat message", ({ matchId, message, timestamp }) => {
             console.log(`📨 채팅 메시지 수신:`, { matchId, message, socketId: socket.id });
-
             const match = matchDataStore[matchId];
             if (!match) {
                 console.error(`❌ 매치 ID ${matchId}에 대한 매칭 정보를 찾을 수 없습니다.`);
@@ -242,14 +248,10 @@ const setupSocketIo = (server) => {
                 return;
             }
 
-            console.log(`🔍 매칭 정보:`, match);
-
             let sender = match.players.find(p => p.socketId === socket.id);
             if (!sender) {
                 console.error(`❌ 소켓 ID ${socket.id}에 대한 플레이어 정보를 찾을 수 없습니다.`);
                 console.log(`📊 현재 플레이어 목록:`, match.players);
-
-                // 소켓 ID가 변경된 경우를 위한 대체 처리
                 const senderByUserId = match.players.find(p => p.userid === socket.user.userid);
                 if (senderByUserId) {
                     console.log(`✅ 사용자 ID로 플레이어를 찾았습니다. 소켓 ID 업데이트`);
@@ -264,6 +266,7 @@ const setupSocketIo = (server) => {
             const chatData = {
                 username: sender.nickname,
                 message: message,
+                timestamp: timestamp || new Date().toISOString() // 타임스탬프 포함, 없으면 새로 생성
             };
 
             console.log(`📤 채팅 메시지 전송:`, {
@@ -274,7 +277,6 @@ const setupSocketIo = (server) => {
 
             io.to(match.roomName).emit("chat message", chatData);
         });
-
 
         socket.on('request normalmatch', async ({ position, microphone }) => {
             try {

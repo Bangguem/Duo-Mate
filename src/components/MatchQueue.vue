@@ -1,87 +1,101 @@
 <template>
     <div class="match-queue">
         <div class="match-container">
-            <!-- ✅ 프로필 & 티어 정보 & 전적 갱신 버튼을 한 줄로 배치 -->
+            <!-- ✅ 프로필 & 티어 정보 -->
             <div class="profile-rank-container">
-                <!-- 프로필 -->
                 <div class="profile-section">
-                    <div class="profile-picture"></div>
+                    <div class="profile-picture">
+                        <img :src="`http://ddragon.leagueoflegends.com/cdn/14.22.1/img/profileicon/${userInfo.summonerInfo?.profileIconId}.png`"
+                            alt="소환사 아이콘" class="summoner-icon" />
+                    </div>
                     <span>안녕하세요, {{ userInfo.nickname }}님!</span>
-                    <!-- 티어 정보 & 전적 갱신 버튼 -->
-                <div class="user-rank-container">
-                    <div class="rank-info">
-                        <img :src="rankIconUrl" alt="티어 아이콘" class="rank-icon" />
-                        <span class="rank-text">{{ userInfo.rank }}</span>
+                    <div class="user-rank-container">
+                        <div class="rank-info">
+                            <img :src="userInfo.summonerRank?.[0]
+                                ? `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/${userInfo.summonerRank[0].tier.toLowerCase()}.png`
+                                : 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png'"
+                                alt="티어 아이콘" class="rank-icon" />
+                            <span class="rank-text">
+                                {{ userInfo.summonerRank?.[0]
+                                    ? userInfo.summonerRank[0].tier + ' ' + userInfo.summonerRank[0].rank
+                                    : '랭크 정보 없음' }}
+                            </span>
+                        </div>
+                        <button class="refresh-button" @click="fetchLatestMatchData">전적 갱신</button>
                     </div>
-                    <button class="refresh-button" @click="fetchLatestMatchData">전적 갱신</button>
                 </div>
-                </div>
-    
-                
             </div>
-    
-                <!-- 포지션 선택 -->
-                <div class="selection-section">
-                    <h2>포지션 (중복 2개 가능)</h2>
-                    <div class="position-options">
-                        <div v-for="pos in positions" :key="pos.value"
-                            :class="{ selected: selectedPositions.includes(pos.value) }" @click="togglePosition(pos.value)">
-                            <img :src="pos.icon" :alt="pos.label" />
-                            <span>{{ pos.label }}</span>
-                        </div>
+
+            <!-- ✅ 포지션 선택 -->
+            <div class="selection-section">
+                <h2>포지션 (중복 2개 가능)</h2>
+                <div class="position-options">
+                    <div v-for="pos in positions" :key="pos.value"
+                        :class="{ selected: selectedPositions.includes(pos.value) }" @click="togglePosition(pos.value)">
+                        <img :src="pos.icon" :alt="pos.label" />
+                        <span>{{ pos.label }}</span>
                     </div>
                 </div>
-    
-                <!-- 음성 채팅 사용 여부 -->
-                <div class="selection-section">
-                    <h2>음성 채팅 사용 여부</h2>
-                    <div class="voice-options">
-                        <div v-for="voice in voiceOptions" :key="voice.value"
-                            :class="{ active: microphone === voice.value }" @click="microphone = voice.value">
-                            <img :src="voice.icon" :alt="voice.label" />
-                            <span>{{ voice.label }}</span>
-                        </div>
-                    </div>
-                </div>
-    
-                <!-- 일반/랭크 선택 -->
-                <div class="selection-section">
-                    <h2>일반 / 랭크</h2>
-                    <div class="game-mode-options">
-                        <div v-for="mode in gameModes" :key="mode.value" :class="{ active: matchType === mode.value }"
-                            @click="matchType = mode.value">
-                            <img :src="mode.icon" :alt="mode.label" />
-                            <span>{{ mode.label }}</span>
-                        </div>
-                    </div>
-                </div>
-    
-                <!-- 매칭 버튼 -->
-                <button @click="startMatching" :disabled="isMatching" class="match-button">매칭 시작</button>
             </div>
-    
-            <!-- ✅ 매칭 완료 화면 -->
-            <div class="match-confirmation" v-if="matchFound">
-    <div class="match-info">
-        <p class="match-text">매칭 완료!!</p>
-    </div>
-    <div class="match-buttons">
-        <button class="reject-button" @click="rejectMatch">거절</button>
-        <button class="accept-button" @click="acceptMatch">수락</button>
-    </div>
-</div>
-    
-            <!-- ✅ 기존 매칭 중 UI 유지 -->
-            <div class="popup-overlay" v-if="isMatching && !matchFound">
-                <div class="popup-content">
-                    <img src="/icons/loading.png" alt="Loading" class="loading-icon" />
-                    <p class="waiting-time">{{ formattedTime }}</p>
-                    <p>상대를 찾고 있습니다. 잠시만 기다려 주세요.</p>
-                    <button @click="cancelMatching">취소</button>
+
+            <!-- ✅ 음성 채팅 사용 여부 -->
+            <div class="selection-section">
+                <h2>음성 채팅 사용 여부</h2>
+                <div class="voice-options">
+                    <div v-for="voice in voiceOptions" :key="voice.value"
+                        :class="{ active: microphone === voice.value }" @click="microphone = voice.value">
+                        <img :src="voice.icon" :alt="voice.label" />
+                        <span>{{ voice.label }}</span>
+                    </div>
                 </div>
+            </div>
+
+            <!-- ✅ 일반/랭크 선택 -->
+            <div class="selection-section">
+                <h2>일반 / 랭크</h2>
+                <div class="game-mode-options">
+                    <div v-for="mode in gameModes" :key="mode.value" :class="{ active: matchType === mode.value }"
+                        @click="matchType = mode.value">
+                        <img :src="mode.icon" :alt="mode.label" />
+                        <span>{{ mode.label }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ✅ 매칭 버튼 -->
+            <button @click="startMatching" :disabled="isMatching" class="match-button">매칭 시작</button>
+        </div>
+
+        <!-- ✅ 매칭 완료 팝업 -->
+        <div class="match-confirmation" v-if="matchFound && !waitingForOpponent">
+            <div class="match-info">
+                <p class="match-text">매칭 완료!!</p>
+            </div>
+            <div class="match-buttons">
+                <button class="reject-button" @click="rejectMatch">거절</button>
+                <button class="accept-button" @click="acceptMatch">수락</button>
             </div>
         </div>
-    </template>
+
+        <!-- ✅ "상대방 응답 대기" 팝업 -->
+        <div class="waiting-popup" v-if="waitingForOpponent">
+            <div class="popup-content">
+                <p>상대방의 응답을 기다리고 있습니다...</p>
+                <img src="/icons/loading.png" alt="Loading" class="loading-icon" />
+            </div>
+        </div>
+
+        <!-- ✅ "매칭 중" UI -->
+        <div class="popup-overlay" v-if="isMatching && !matchFound && !waitingForOpponent">
+            <div class="popup-content">
+                <img src="/icons/loading.png" alt="Loading" class="loading-icon" />
+                <p class="waiting-time">{{ formattedTime }}</p>
+                <p>상대를 찾고 있습니다. 잠시만 기다려 주세요.</p>
+                <button @click="cancelMatching">취소</button>
+            </div>
+        </div>
+    </div>
+</template>
 
 <script>
 import { io } from "socket.io-client";
@@ -98,6 +112,8 @@ export default {
             isMatching: false,
             matchFound: false,
             matchId: null,
+            opponentAccepted: false,  // 🔹 상대방이 수락했는지 여부
+            waitingForOpponent: false,  // 🔹 상대 응답 대기 상태 추가
             waitingTime: 0,
             timer: null,
 
@@ -127,25 +143,46 @@ export default {
         };
     },
 
-
     async mounted() {
         await this.checkLoginStatus(); // 로그인 상태 확인
         this.initializeSocket();
     },
 
     methods: {
+
+        async fetchLatestMatchData() {
+            try {
+                const response = await fetch('http://localhost:3000/updateSummonerInfo', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert("소환사 정보 갱신 성공");
+                    await this.checkLoginStatus();
+                } else {
+                    alert("소환사 정보 갱신 실패: " + result.message);
+                }
+            } catch (error) {
+                console.error("소환사 정보 갱신 오류:", error);
+                alert("소환사 정보 갱신 중 오류 발생");
+            }
+        },
+
         async checkLoginStatus() {
             try {
                 const response = await fetch('http://localhost:3000/auth/check-login', {
                     method: 'GET',
-                    credentials: 'include', // 쿠키 포함
+                    credentials: 'include',
                 });
 
                 if (response.ok) {
                     const data = await response.json();
                     this.isLoggedIn = data.loggedIn;
                     if (data.loggedIn) {
-                        this.userInfo = data.user || {}; // 사용자 정보를 객체로 저장
+                        this.userInfo = data.user || {};
                     } else {
                         this.handleUnauthenticatedUser();
                     }
@@ -160,14 +197,14 @@ export default {
 
         handleUnauthenticatedUser() {
             this.isLoggedIn = false;
-            this.userInfo = {}; // 사용자 정보 초기화
+            this.userInfo = {};
             alert("로그인이 필요합니다. 메인 화면으로 이동합니다.");
-            this.$router.push("/"); // 메인 화면으로 이동
+            this.$router.push("/");
         },
 
         resetUserData() {
             this.isLoggedIn = false;
-            this.userInfo = {}; // 사용자 정보 초기화
+            this.userInfo = {};
         },
 
         initializeSocket() {
@@ -177,55 +214,45 @@ export default {
                 console.log("❌ 서버 연결 해제됨. 대기열에서 제거");
                 this.isMatching = false;
                 this.matchFound = false;
-                if (this.timer) {
-                    clearInterval(this.timer);
-                }
+                this.waitingForOpponent = false;
+                this.opponentAccepted = false;
+                if (this.timer) clearInterval(this.timer);
             });
 
             this.socket.on("matchSuccess", (data) => {
-                console.log("🔹 서버에서 받은 matchSuccess 데이터:", data);
+                console.log("🔹 매칭 성공:", data);
                 this.matchId = data.matchId;
                 this.matchFound = true;
+                this.waitingForOpponent = false;
             });
 
-            this.socket.on("matchRejected", (data) => {
-                console.log("❌ 매칭 취소됨:", data.message);
+            this.socket.on("matchRejected", () => {
+                console.log("❌ 상대방이 매칭을 거절함");
                 this.matchFound = false;
                 this.isMatching = false;
-                if (this.timer) {
-                    clearInterval(this.timer);
-                }
+                this.waitingForOpponent = false;
+                this.opponentAccepted = false;
+                if (this.timer) clearInterval(this.timer);
                 alert("⚠️ 상대방이 매칭을 거부했습니다. 다시 시도해주세요!");
             });
 
-            this.socket.on("matchCancelled", (data) => {
-                console.log("❌ 매칭 취소됨:", data.message);
-                this.matchFound = false;
-                this.isMatching = false;
-                if (this.timer) {
-                    clearInterval(this.timer);
+            this.socket.on("matchConfirmed", async (data) => {
+                if (data.matchId === this.matchId) {
+                    this.opponentAccepted = true;  // 🔹 상대방이 수락함
+                    if (this.waitingForOpponent) {
+                        // ✅ 나도 수락했으므로 채팅방으로 이동
+                        this.$router.push(`/chatroom?matchId=${this.matchId}`);
+                    }
                 }
             });
 
-            this.socket.on("matchConfirmed", async (data) => {
-                try {
-                    const response = await fetch(`http://localhost:3000/match/save`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        credentials: "include",
-                        body: JSON.stringify({
-                            matchId: data.matchId
-                        }),
-                    });
-
-                    const result = await response.json();
-                    if (result.success) {
-                        console.log("✅ 매칭 저장 성공");
-                        this.$router.push(`/chatroom?matchId=${data.matchId}`);
-                    }
-                } catch (error) {
-                    console.error("❌ 매칭 저장 오류:", error);
-                }
+            this.socket.on("matchCancelled", () => {
+                console.log("❌ 매칭 취소됨");
+                this.matchFound = false;
+                this.isMatching = false;
+                this.waitingForOpponent = false;
+                this.opponentAccepted = false;
+                if (this.timer) clearInterval(this.timer);
             });
         },
 
@@ -247,42 +274,36 @@ export default {
 
             this.socket.emit(
                 this.matchType === "일반" ? "request normalmatch" : "request rankmatch",
-                {
-                    position: this.selectedPositions,
-                    microphone: this.microphone
-                }
+                { position: this.selectedPositions, microphone: this.microphone }
             );
         },
 
         acceptMatch() {
             if (this.matchId) {
                 this.socket.emit("acceptMatch", { matchId: this.matchId });
+                this.waitingForOpponent = true;  // 🔹 상대방 응답 대기 상태 활성화
             }
-            if (this.timer) {
-                clearInterval(this.timer);
+            if (this.opponentAccepted) {
+                // ✅ 상대방도 수락한 상태 → 채팅방으로 이동
+                this.$router.push(`/chatroom?matchId=${this.matchId}`);
             }
-            this.isMatching = false;
-            this.matchFound = false;
         },
 
         rejectMatch() {
             if (this.matchId) {
                 this.socket.emit("rejectMatch", { matchId: this.matchId });
             }
-            if (this.timer) {
-                clearInterval(this.timer);
-            }
             this.isMatching = false;
             this.matchFound = false;
+            this.waitingForOpponent = false;
+            this.opponentAccepted = false;
+            if (this.timer) clearInterval(this.timer);
         },
 
         cancelMatching() {
-            if (this.timer) {
-                clearInterval(this.timer);
-            }
+            if (this.timer) clearInterval(this.timer);
             this.isMatching = false;
             this.socket.emit("cancel match");
-
         }
     },
 
@@ -295,12 +316,8 @@ export default {
     },
 
     beforeUnmount() {
-        if (this.timer) {
-            clearInterval(this.timer);
-        }
-        if (this.socket) {
-            this.socket.disconnect();
-        }
+        if (this.timer) clearInterval(this.timer);
+        if (this.socket) this.socket.disconnect();
     }
 };
 </script>
@@ -311,7 +328,7 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    width: 300vw;
+    width: 100vw;
     background-color: #1e1e1e;
 }
 
@@ -320,91 +337,145 @@ export default {
     padding: 20px;
     border-radius: 10px;
     color: white;
-    width: 600px;  /* 🔹 기존 400px → 600px로 확대 */
-    max-width: 80%; /* 🔹 화면 크기에 맞게 유동적으로 조절 */
+    width: 600px;
+    max-width: 80%;
 }
 
-/* ✅ 프로필 + 티어 아이콘 + 전적 갱신 버튼을 한 줄로 정렬 */
-.profile-rank-container {
+/* ✅ 프로필 영역 */
+.profile-section {
     display: flex;
-    align-items: center;  /* 요소들을 수직 정렬 */
-    justify-content: space-between;  /* 양 끝으로 배치 */
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-picture {
+    width: 80px;
+    height: 80px;
+    background-color: #2c2c2c;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.summoner-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.profile-section span {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+}
+
+.profile-rank-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
     max-width: 600px;
     margin-bottom: 20px;
-    gap: 20px; /* 프로필과 티어 정보 사이 여백 */
 }
 
-/* ✅ 티어 정보 & 전적 갱신 버튼을 한 줄 정렬 */
 .user-rank-container {
+    position: absolute;
+    top: 0;
+    right: 0;
     display: flex;
-    align-items: center;  /* 수직 정렬 */
-    gap: 10px; /* 티어 아이콘과 버튼 사이 여백 */
+    align-items: center;
+    gap: 10px;
 }
 
-/* ✅ 티어 정보 스타일 */
 .rank-info {
     display: flex;
-    flex-direction: column;  /* 아이콘 & 티어 이름 세로 배치 */
+    flex-direction: column;
     align-items: center;
     text-align: center;
+    gap: 5px;
 }
 
-/* ✅ 아이콘 스타일 */
 .rank-icon {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
 }
 
-/* ✅ 전적 갱신 버튼 크기 조정 */
+.rank-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    margin-top: -5px;
+}
+
 .refresh-button {
-    padding: 8px 12px;
+    padding: 10px 15px;
     background: rgb(21, 81, 55);
     color: white;
     font-size: 14px;
+    font-weight: bold;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-}
-.refresh-button:hover {
-    background: rgb(30, 100, 70);
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
-/* 아이콘 선택 스타일 */
+.refresh-button:hover {
+    background: rgb(30, 100, 70);
+    transform: scale(1.05);
+}
+
+/* ✅ 포지션, 음성채팅, 게임모드 선택 스타일 */
 .position-options,
 .voice-options,
 .game-mode-options {
     display: flex;
     justify-content: center;
-    /* 아이콘들을 가운데 정렬 */
     align-items: center;
     gap: 20px;
-    /* 아이콘 간격 조정 */
     flex-wrap: wrap;
-    /* 여러 줄로 자동 배치 */
 }
 
-/* 포지션 아이콘 크기 */
+/* ✅ 아이콘과 텍스트를 세로 정렬 (아이콘 아래 글자 표시) */
+.position-options div,
+.voice-options div,
+.game-mode-options div {
+    display: flex;
+    flex-direction: column;
+    /* 세로 정렬 */
+    align-items: center;
+    text-align: center;
+}
+
 .position-options img {
-    width: var(--position-icon-width, 80px);
-    height: var(--position-icon-height, 80px);
+    width: 70px;
+    height: 70px;
     transition: transform 0.2s;
 }
 
-/* 음성 채팅 아이콘 크기 */
-.voice-options img {
-    width: var(--voice-icon-width, 50px);
-    height: var(--voice-icon-height, 80px);
-    transition: transform 0.2s;
+/* ✅ 마이크 "사용" 아이콘 크기 */
+.voice-options img[src*="mic-on.png"] {
+    width: 50px;
+    /* 원하는 크기 */
+    height: 90px;
 }
 
-/* 게임 모드 아이콘 크기 */
+/* ✅ 마이크 "미사용" 아이콘 크기 */
+.voice-options img[src*="mic-off.png"] {
+    width: 70px;
+    /* 원하는 크기 */
+    height: 90px;
+}
+
 .game-mode-options img {
-    width: var(--game-mode-icon-width, 80px);
-    height: var(--game-mode-icon-height, 80px);
+    width: 140px;
+    height: 140px;
     transition: transform 0.2s;
 }
-
 
 .position-options img:hover,
 .voice-options img:hover,
@@ -412,39 +483,13 @@ export default {
     transform: scale(1.1);
 }
 
-/* 선택된 아이콘 강조 */
 .selected img,
 .active img {
     border: 3px solid rgb(21, 81, 55);
     border-radius: 10px;
 }
 
-/* 매칭 중 로딩 아이콘 */
-.loading-icon {
-    width: 80px;
-    height: 80px;
-    animation: spin 1s linear infinite;
-}
-
-/* 회전 애니메이션 */
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* 대기 시간 표시 */
-.waiting-time {
-    font-size: 24px;
-    font-weight: bold;
-    margin: 10px 0;
-}
-
-/* 매칭 버튼 */
+/* ✅ 매칭 버튼 */
 .match-button {
     display: block;
     margin: 20px auto;
@@ -458,80 +503,26 @@ export default {
     cursor: pointer;
 }
 
-.popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.match-button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
 }
 
-.popup-content {
-    background: #333;
-    /* 배경 어두운 색으로 유지 */
-    padding: 20px;
-    border-radius: 5px;
-    text-align: center;
-}
-
-/*  매칭 중 안내 문구 흰색으로 변경 */
-.popup-content p {
-    color: white;
-    /* 글자 색상을 흰색으로 변경 */
-    font-size: 18px;
-    text-align: center;
-}
-
-.position-options img {
-    width: v-bind(positionIconSize + 'px');
-    height: v-bind(positionIconSize + 'px');
-}
-
-
-
-.game-mode-options img {
-    width: v-bind(gameModeIconSize + 'px');
-    height: v-bind(gameModeIconSize + 'px');
-}
-
-/* 아이콘과 글자 세로 정렬 */
-.icon-container {
-    display: flex;
-    flex-direction: column;
-    /* 세로 정렬 */
-    align-items: center;
-    /* 가운데 정렬 */
-    text-align: center;
-    cursor: pointer;
-    margin: 10px;
-}
-
-/* ✅ 아이콘 밑에 텍스트 스타일 */
-.icon-label {
-    margin-top: 5px;
-    /* 아이콘과 글자 사이 여백 */
-    font-size: 14px;
-    color: white;
-}
-
+/* ✅ 매칭 완료 팝업 */
 .match-confirmation {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    position: fixed;  /* 화면에 고정 (팝업 역할) */
-    top: 50%;  /* 화면 중앙 위치 */
+    position: fixed;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
-    width: 400px;  /* 원하는 팝업 크기 */
-    height: 600px; /* 원하는 팝업 크기 */
-    background: #222; /* 팝업 배경 색 */
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 600px;
+    background: #222;
     color: white;
-    border-radius: 15px; /* 팝업 모서리 둥글게 */
+    border-radius: 15px;
     padding: 20px;
     text-align: center;
 }
@@ -559,7 +550,8 @@ export default {
     gap: 10px;
 }
 
-.reject-button, .accept-button {
+.reject-button,
+.accept-button {
     padding: 15px 30px;
     font-size: 16px;
     border: none;
@@ -579,5 +571,149 @@ export default {
     border-radius: 45px;
 }
 
+/* ✅ 매칭 중 UI 배경 (팝업 전체 배경) */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    /* 🔹 투명도 조정 가능 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.popup-content {
+    background: rgb(66, 66, 66);
+    /* 🔹 팝업 배경색 변경 */
+    padding: 30px;
+    /* 🔹 내부 패딩 */
+    border-radius: 15px;
+    /* 🔹 둥근 모서리 */
+    text-align: center;
+    width: 300px;
+    /* 🔹 팝업 크기 조정 */
+    height: 500px;
+    /* 🔹 높이 조정 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-content p {
+    color: white;
+    /* 🔹 글자 색상 */
+    font-size: 15px;
+    /* 🔹 글자 크기 */
+    font-weight: bold;
+    /* 🔹 글자 굵기 */
+    text-align: center;
+    margin-bottom: 10px;
+    /* 🔹 간격 조정 */
+}
+
+/* ✅ 로딩 아이콘 */
+.loading-icon {
+    width: 80px;
+    /* 🔹 아이콘 크기 */
+    height: 80px;
+    margin-top: 10px;
+    animation: spin 1s linear infinite;
+    /* 🔹 회전 애니메이션 */
+}
+
+/* ✅ 로딩 애니메이션 (회전 속도 변경 가능) */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.popup-content button {
+    padding: 12px 20px;
+    background: rgb(66, 66, 66);
+    /* 🔹 팝업 배경색과 동일 */
+    color: white;
+    /* 🔹 글자색 */
+    font-size: 16px;
+    /* 🔹 글자 크기 */
+    border: 1px solid white;
+    /* 🔹 흰색 테두리 추가 */
+    border-radius: 10px;
+    /* 🔹 둥근 모서리 */
+    cursor: pointer;
+    margin-top: 15px;
+    transition: transform 0.2s ease;
+}
+
+/* ✅ 버튼 호버 효과 (색상 변화 없이 살짝 확대) */
+.popup-content button:hover {
+    transform: scale(1.05);
+}
+
+/* ✅ 상대방 응답 대기 팝업 스타일 */
+.waiting-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgb(66, 66, 66);
+    /* 🔹 배경색을 하나로 통일 */
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 400px;
+}
+
+/* ✅ 로딩 아이콘 스타일 */
+.loading-icon {
+    width: 50px;
+    height: 50px;
+    margin-top: 10px;
+    animation: spin 1s linear infinite;
+    /* 🔹 애니메이션 추가 */
+}
+
+/* ✅ 회전 애니메이션 */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ✅ 대기 시간 표시 */
+.waiting-time {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* ✅ 반응형 스타일 */
+@media (max-width: 768px) {
+    .match-container {
+        width: 90%;
+    }
+
+    .match-confirmation {
+        width: 90%;
+        height: auto;
+    }
+}
 </style>
