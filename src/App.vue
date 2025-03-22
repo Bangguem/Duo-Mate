@@ -225,7 +225,7 @@ export default {
     },
     async checkLoginStatus() {
       try {
-        const response = await fetch('http://localhost:3000/auth/check-login', {
+        const response = await fetch('https://port-0-duo-mate-server-m8jpfiwg78a4ac2e.sel4.cloudtype.app/auth/check-login', {
           method: 'GET',
           credentials: 'include', // 쿠키 포함
         });
