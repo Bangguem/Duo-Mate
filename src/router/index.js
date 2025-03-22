@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import SignupForm from '../components/SignupForm.vue';
 import LoginForm from '@/components/LoginForm.vue';
 import RequestPasswordReset from '@/components/RequestPasswordReset.vue';
@@ -55,9 +55,10 @@ const routes = [
 
 ];
 
+// router/index.js
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+  history: createWebHashHistory(), // ← history 모드 대신 hash 모드 사용
+  routes
 });
 
 async function isLoggedIn() {
