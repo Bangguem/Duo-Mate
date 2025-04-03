@@ -122,6 +122,7 @@
 
                 <button class="close-button" @click="mypageopen = false">닫기</button>
               </div>
+              </div>
             </div>
             <a href="/mypage-edit">내 정보 변경</a>
             <a @click="logout()">로그아웃</a>
@@ -598,6 +599,7 @@ body {
 .match-button:hover {
   background-color: #15513775;
 }
+
 
 .champion-list {
   display: flex;
