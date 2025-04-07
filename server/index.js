@@ -213,8 +213,8 @@ app.post('/change-userprofile', authenticateJWT, async (req, res) => {
     if (userData) {
         const { nickname, birthdate, gender, email, introduction } = req.body;
         
-        if (introduction && introduction.length > 500) {
-            return res.status(400).json({ success: false, message: '자기소개는 최대 500자까지 입력 가능합니다.' });
+        if (introduction && introduction.length > 40) {
+            return res.status(400).json({ success: false, message: '자기소개는 최대 40자까지 입력 가능합니다.' });
         }
         
         try {
