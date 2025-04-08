@@ -626,6 +626,7 @@ body {
   font-size: 10px;
   /* 기존 20px → 12px */
   font-weight: bold;
+  white-space: nowrap; 
 }
 
 .most-champions-title {
