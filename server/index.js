@@ -21,7 +21,10 @@ const { generateToken, verifyToken } = require('./auth');
 // 라우터 불러오기
 const boardRouter = require('./routes/board');
 const patchNotesFetcherRouter = require('./routes/patchNotesFetcher');
-
+const noticesRoutes = require('./routes/notices'); // notices 라우트 불러오기
+const updateRouter = require('./routes/updateFetcher'); // 업데이트 라우터 추가
+const inquiriesRouter = require('./routes/inquiries');
+const path = require('path');
 // ─────────────────────────────────────────────
 //  Middleware 설정
 // ─────────────────────────────────────────────
@@ -41,7 +44,10 @@ app.options('*', cors());
 // ─────────────────────────────────────────────
 app.use('/api/board', boardRouter);
 app.use('/api/patch-notes', patchNotesFetcherRouter);
-
+app.use('/api/notices', noticesRoutes);
+app.use('/api/updates', updateRouter); // 업데이트 API 추가
+app.use('/api/inquiries', inquiriesRouter);
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 // ─────────────────────────────────────────────
 //  HTTP 서버 및 Socket.IO 초기화
 // ─────────────────────────────────────────────
@@ -82,6 +88,12 @@ app.post('/signup', async (req, res) => {
     if (password !== passwordcheck) {
         return res.status(400).json({ success: false, message: '비밀번호가 일치하지 않습니다.' });
     }
+
+     // 비밀번호 길이 검사: 8자 이상인지 확인
+     if (password.length < 8) {
+        return res.status(400).json({ success: false, message: '비밀번호는 8자 이상이어야 합니다.' });
+    }
+    
     const user = await fetchUser(userid);
     if (user) {
         return res.status(400).json({ success: false, message: `이미 존재하는 아이디입니다: ${userid}` });
@@ -94,6 +106,7 @@ app.post('/signup', async (req, res) => {
         nickname,
         birthdate: birthdate || null,
         gender: gender || 'other',
+        introduction: "안녕하세요."
     };
     await createUser(newUser);
     const token = generateToken({ userid: newUser.userid });
@@ -148,12 +161,13 @@ app.get('/auth/check-login', authenticateJWT, async (req, res) => {
         return res.status(401).json({ loggedIn: false, message: '로그인 상태가 아닙니다.' });
     } else {
         const user = await fetchUser(req.user.userid);
+        delete user.password;
         return res.status(200).json({ loggedIn: true, message: '로그인 상태입니다.', user });
     }
 });
 
 // 회원 탈퇴
-app.get('/withdraw', authenticateJWT, async (req, res) => {
+app.post('/withdraw', authenticateJWT, async (req, res) => {
     const user = req.user;
     try {
         const isDeleted = await removeUser(user.userid);
@@ -173,7 +187,12 @@ app.get('/withdraw', authenticateJWT, async (req, res) => {
 app.post('/change-userprofile', authenticateJWT, async (req, res) => {
     const userData = req.user;
     if (userData) {
-        const { nickname, birthdate, gender, email } = req.body;
+        const { nickname, birthdate, gender, email, introduction } = req.body;
+        
+        if (introduction && introduction.length > 40) {
+            return res.status(400).json({ success: false, message: '자기소개는 최대 40자까지 입력 가능합니다.' });
+        }
+        
         try {
             const userprofile = {
                 userid: userData.userid,
@@ -181,6 +200,7 @@ app.post('/change-userprofile', authenticateJWT, async (req, res) => {
                 birthdate,
                 gender,
                 email,
+                introduction
             };
             await ChangeUserprofile(userprofile);
             return res.status(200).json({ success: true, message: '내 정보 변경 성공' });
