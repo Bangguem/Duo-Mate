@@ -44,15 +44,16 @@
               v-model="userInfo.nickname" />
             <label for="birthdate">이메일</label>
             <input type="email" :placeholder="userInfo.email || '메일을 입력하세요'" v-model="userInfo.email" />
-            <label for="birthdate">성별</label>
-            <select id="gender" v-model="userInfo.gender">
+            <label for="introductin">자기소개</label>
+            <input type="text" :placeholer="userInfo.introduction || '자기소개를 입력하세요(40자 이내)'" v-model="userInfo.introduction" />
+            <!-- <select id="gender" v-model="userInfo.gender">
               <option value="" disabled>성별을 선택하세요</option>
               <option value="male">남성</option>
               <option value="female">여성</option>
               <option value="other">기타</option>
-            </select>
-            <label for="birthdate">생년월일</label>
-            <input id="birthdate" type="date" v-model="userInfo.birthdate" />
+            </select> -->
+            <!-- <label for="birthdate">생년월일</label>
+            <input id="birthdate" type="date" v-model="userInfo.birthdate" /> -->
             <button type="submit" class="submit-btn">저장</button>
           </form>
         </div>
@@ -173,6 +174,7 @@ export default {
         gender: '',
         birthdate: '',
         top5Champions: [],
+        introduction: '',
       },
       riotInfo: {
         summonerRank: [],
