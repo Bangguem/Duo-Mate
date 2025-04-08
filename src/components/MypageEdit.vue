@@ -243,6 +243,7 @@ export default {
             birthdate: this.userInfo.birthdate,
             gender: this.userInfo.gender,
             email: this.userInfo.email,
+            introduction: this.userInfo.introduction
           }),
         });
 

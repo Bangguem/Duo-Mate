@@ -29,8 +29,7 @@
                 <div class="user-info-display">
                   <p v-if="userInfo.nickname"><strong>닉네임:</strong> {{ userInfo.nickname }}</p>
                   <p v-if="userInfo.email"><strong>이메일:</strong> {{ userInfo.email }}</p>
-                  <p v-if="userInfo.birthdate"><strong>생년월일:</strong> {{ userInfo.birthdate }}</p>
-                  <p v-if="userInfo.gender"><strong>성별:</strong> {{ userInfo.gender }}</p>
+                  <p v-if="userInfo.introduction"><strong>자기소개:</strong> {{ userInfo.introduction }}</p>
                 </div>
 
                 <!-- 수정 버튼 -->
@@ -240,6 +239,7 @@ export default {
       }
     },
     async checkLoginStatus() {
+
       try {
         const response = await fetch('http://localhost:3000/auth/check-login', {
           method: 'GET',
@@ -250,6 +250,7 @@ export default {
           const data = await response.json();
           this.isLoggedIn = data.loggedIn;
           if (data.loggedIn) {
+            console.log("받아온 유저 정보:", data.user);
             this.userInfo = data.user || {}; // 사용자 정보를 객체로 저장
           }
         } else {

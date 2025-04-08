@@ -204,6 +204,7 @@ app.post('/change-userprofile', authenticateJWT, async (req, res) => {
             };
             await ChangeUserprofile(userprofile);
             return res.status(200).json({ success: true, message: '내 정보 변경 성공' });
+            console.log("intro:", req.body.introduction);
         } catch (error) {
             console.error('Error updating profile:', error);
             return res.status(500).json({ success: false, message: '내 정보 변경 실패' });
