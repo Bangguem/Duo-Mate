@@ -53,30 +53,6 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 // ─────────────────────────────────────────────
 const server = http.createServer(app);
 const io = setupSocketIo(server);
-// 서버 실행
-
-
-const bcrypt = require('bcrypt');
-require('dotenv').config();
-const { connectToMongo, fetchUser, createUser, removeUser, closeMongoConnection,
-    ChangeUserprofile, createSummoner, fetchUserByemail, updatePassword, } = require('./db');
-const { generateToken, verifyToken } = require('./auth');
-const cookieParser = require('cookie-parser');
-app.use(cookieParser()); // 쿠키 파싱
-app.use(express.urlencoded({ extended: true })); // URL-encoded 요청 본문 파싱
-const nodemailer = require('nodemailer');
-const boardRouter = require('./routes/board');  // board 라우터 추가
-const patchNotesFetcherRouter = require('./routes/patchNotesFetcher'); // patchNotesFetcher 라우터 추가
-const noticesRoutes = require('./routes/notices'); // notices 라우트 불러오기
-const updateRouter = require('./routes/updateFetcher'); // 업데이트 라우터 추가
-const inquiriesRouter = require('./routes/inquiries');
-const path = require('path');
-app.use('/api/board', boardRouter);  // /api/board 라우트 추가
-app.use('/api/patch-notes', patchNotesFetcherRouter);  // /api/patch-notes 라우터 연결
-app.use('/api/notices', noticesRoutes);
-app.use('/api/updates', updateRouter); // 업데이트 API 추가
-app.use('/api/inquiries', inquiriesRouter);
-app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 connectToMongo().then(() => {
     server.listen(PORT, () => {
@@ -224,7 +200,7 @@ app.post('/change-userprofile', authenticateJWT, async (req, res) => {
                 birthdate,
                 gender,
                 email,
-                introduction,
+                introduction
             };
             await ChangeUserprofile(userprofile);
             return res.status(200).json({ success: true, message: '내 정보 변경 성공' });
