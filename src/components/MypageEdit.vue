@@ -69,10 +69,9 @@
 
         <div class="gaming-details">
           <div class="detail-item">
-            <img v-if="!userInfo.summonerRank && userInfo.summonerInfo" src="@/assets/Rank/unranked.png" alt="">
-            <p v-if="!userInfo.summonerRank && userInfo.summonerInfo">랭크 정보 없음</p>
-            <img v-if="userInfo.summonerRank && userInfo.summonerRank?.[0]?.tier"
-              :src="require(`@/assets/Rank/Rank=${userInfo.summonerRank?.[0]?.tier}.png`)" alt="" />
+            <img v-if="!userInfo.summonerRank?.[0]?.tier && userInfo.summonerInfo" src="@/assets/Rank/unranked.png" alt="">
+            <p v-if="!userInfo.summonerRank?.[0]?.tier && userInfo.summonerInfo">랭크 정보 없음</p>
+            <img v-if="userInfo.summonerRank && userInfo.summonerRank?.[0]?.tier" :src="require(`@/assets/Rank/Rank=${userInfo.summonerRank?.[0]?.tier}.png`)" alt="" />
             <p v-if="userInfo.summonerRank && userInfo.summonerRank?.[0]?.tier">Game Tier</p>
             <h3>{{ userInfo.summonerRank?.[0]?.tier || "" }} {{ userInfo.summonerRank?.[0]?.rank || "" }}</h3>
           </div>
@@ -648,6 +647,8 @@ footer {
   font-size: 20px;
   font-weight: bold;
   /* 글씨 두껍게 */
+  white-space: normal; /* 줄바꿈 허용 */
+  word-break: keep-all; /* 단어 단위 줄바꿈 */
 
 }
 
