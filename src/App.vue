@@ -66,9 +66,9 @@
                           <div v-if="(userInfo.top5Champions || [])[1]?.masteryLevel >= 10" class="mastery-wrapper">
                             <img src="@/assets/Mastery/level.webp" class="high-mastery-icon" alt="High Mastery" />
                             <p class="high-mastery-level">{{ (userInfo.top5Champions || [])[1]?.masteryLevel }}</p>
-                            <br />
-                            <p>{{ (userInfo.top5Champions || [])[1]?.championName || "" }}</p>
                           </div>
+                          <br />
+                            <p>{{ (userInfo.top5Champions || [])[1]?.championName || "" }}</p>
                         </div>
                         <div class="champion-item">
                           <img v-if="(userInfo.top5Champions || [])[0]?.iconUrl"
@@ -85,9 +85,9 @@
                           <div v-if="(userInfo.top5Champions || [])[0]?.masteryLevel >= 10" class="mastery-wrapper">
                             <img src="@/assets/Mastery/level.webp" class="high-mastery-icon" alt="High Mastery" />
                             <p class="high-mastery-level">{{ (userInfo.top5Champions || [])[0]?.masteryLevel }}</p>
-                            <br />
-                            <p>{{ (userInfo.top5Champions || [])[0]?.championName || "" }}</p>
                           </div>
+                          <br />
+                          <p>{{ (userInfo.top5Champions || [])[0]?.championName || "" }}</p>
                         </div>
                         <div class="champion-item">
                           <img v-if="(userInfo.top5Champions || [])[2]?.iconUrl"
@@ -104,9 +104,9 @@
                           <div v-if="(userInfo.top5Champions || [])[2]?.masteryLevel >= 10" class="mastery-wrapper">
                             <img src="@/assets/Mastery/level.webp" class="high-mastery-icon" alt="High Mastery" />
                             <p class="high-mastery-level">{{ (userInfo.top5Champions || [])[2]?.masteryLevel }}</p>
-                            <br />
-                            <p>{{ (userInfo.top5Champions || [])[2]?.championName || "" }}</p>
                           </div>
+                          <br />
+                            <p>{{ (userInfo.top5Champions || [])[2]?.championName || "" }}</p>
                         </div>
                       </div>
                       <!-- <p>{{ userInfo.topChampions.map(c => c.name).join(', ') }}</p> -->
@@ -642,7 +642,7 @@ body {
 
 .champion-item .mastery-icon {
   position: absolute;
-  bottom: -10px;
+  bottom: 26px;
   left: 50%;
   transform: translateX(-50%);
   width: 30px;
@@ -661,7 +661,7 @@ body {
 }
 
 .most-champions .champion-item .high-mastery-icon {
-  bottom: -2px;
+  bottom: 32px;
   width: 15px;
   height: 8px;
   position: absolute;
@@ -669,7 +669,7 @@ body {
 }
 
 .most-champions .champion-item .high-mastery-level {
-  bottom: -8px;
+  bottom: 26px;
   position: absolute;
   left: 50%;
   transform: translate(-50%, -50%);
