@@ -26,9 +26,19 @@
               id="newPassword"
               class="form-input"
               v-model="newPassword"
+              minlength="8"
               placeholder="새 비밀번호를 입력해주세요"
             />
+            <img
+      :src="passwordVisible ? openIcon : closeIcon"
+      alt="Show Password"
+      class="toggle-password"
+      @click="togglePasswordVisibility('password')"
+    />
           </div>
+          <div v-if="form.password.length > 0 && form.password.length < 8" class="error-message">
+    비밀번호는 최소 8자리 이상이어야 합니다.
+  </div>
           <div class="form-group">
             <label for="confirmPassword" class="form-label">새 비밀번호 확인</label>
             <input
@@ -36,6 +46,7 @@
               id="confirmPassword"
               class="form-input"
               v-model="confirmPassword"
+              minlength="8"
               placeholder="새 비밀번호를 다시 입력해주세요"
             />
           </div>

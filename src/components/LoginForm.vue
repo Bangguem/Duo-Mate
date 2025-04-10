@@ -112,7 +112,7 @@ export default {
         if (this.isButtonDisabledId) return;
 
 this.isButtonDisabledId = true;
-this.timerId = 180;
+this.timerId = 60;
 
 const countdownId = setInterval(() => {
     this.timerId -= 1;
@@ -148,7 +148,7 @@ try {
         if (this.isButtonDisabledPassword) return; // 버튼이 비활성화된 상태면 요청 막기
 
           this.isButtonDisabledPassword = true; // 버튼 비활성화
-          this.timerPassword = 180; // 10초 대기 시간 설정
+          this.timerPassword = 60; // 10초 대기 시간 설정
 
           const countdown = setInterval(() => {
           this.timerPassword -= 1;
