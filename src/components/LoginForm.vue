@@ -27,6 +27,7 @@
           <button type="submit" class="login-button">로그인</button>
           <p class="error-message" v-if="errorMessage">{{ errorMessage }}</p>
         </form>
+        <br />
         <div class="actions-link">
           <a @click="openFindIdModal">아이디 찾기</a>
           <div class="modal-overlay" v-if="rqid==true">
@@ -354,10 +355,11 @@ background-color: #15513775;
   text-decoration: none;
   font-size: 12px;
   margin: 0px 10px 0px 10px;
+  cursor: pointer;
 }
 
-.action-link a:hover,
-.action-link router-link:hover {
+.actions-link a:hover,
+.actions-link router-link:hover {
 text-decoration: underline;
 }
 .error-message{

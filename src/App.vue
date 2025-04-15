@@ -157,12 +157,10 @@
             <strong>Your browser does not support the video tag.</strong>
           </video>
           <div class="overlay-text">
-            <h1>Find your Duo Mate!</h1>
-            <p>Connect with gamers and build lasting friendships in our real-time chat platform designed for gamers!!!!
-            </p>
-            <button class="match-button" @click="enterMatchQueue">ENTER MATCH QUEUE</button>
+            <h1>듀오를 찾아보세요</h1>
+            <p>같이 할 듀오가 필요할 때, DuoMate!</p>
+            <button class="match-button" @click="enterMatchQueue">매칭 시작</button>
           </div>
-
         </div>
       </div>
     </main>
@@ -329,12 +327,17 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
+  background: #000 url('./assets//212121.png');
+  -webkit-overflow-scrolling: touch; /* 스크롤 부드럽게 처리 */
+  
 }
 
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  background-color: #212121;
+  background: #000 url('./assets//212121.png');
+  -webkit-overflow-scrolling: touch; /* 스크롤 부드럽게 처리 */
 }
 
 #app {
@@ -342,6 +345,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: #212121
 }
 
 /* 헤더 스타일 */
@@ -459,7 +463,7 @@ body {
 .modal-content {
   background-color: #2a2a2a;
   color: white;
-  width: 0%;
+  width: 90%;
   max-width: 500px;
   padding: 20px;
   border-radius: 8px;
