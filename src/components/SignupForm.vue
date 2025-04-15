@@ -8,10 +8,10 @@
       </div>
       <span>회원가입</span>
       </div>
-      <nav>
-        <a href="/">홈 화면</a>
-        <a href="/login">로그인</a>
-        <a href="/contact">Contact</a>
+      <nav class="nav-links">
+        <div class="nav-button" @click="$router.push('/')">홈</div>
+            <div class="nav-button" @click="$router.push('/login')">로그인</div>
+            <div class="nav-button" @click="$router.push('/patch-notes')">패치 노트</div> 
       </nav>
     </header>
     <main>
@@ -334,11 +334,36 @@ display: flex;
 justify-content: space-between;
 align-items: center;
 background-color: #424242;
+height: 50px;
 }
 
 .header h1 {
 margin: 0;
 font-size: 16px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  padding: 0 16px;
+  background-color: transparent;
+  color: #FAFAFA;
+  border-radius: 0;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.nav-button:hover {
+  background-color: #212121;
 }
 
 .header nav a {

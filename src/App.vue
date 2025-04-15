@@ -9,13 +9,13 @@
             <div class="circle">
               <img src="/favicon.ico" class="circle" @click="$router.push('/')" style="cursor: pointer;" alt="" />
             </div>
-            <span>{{ userInfo.nickname }} 님</span>
+            <span>{{ userInfo.nickname }} ({{ userInfo.SummonerName }}#{{ userInfo.Tag }})</span>
           </div>
           <nav class="nav-links">
             <!-- <a v-if="userInfo.nickname"><strong>닉네임:</strong> {{ userInfo.nickname }}</a> -->
-            <a @click="mypageopen = true">마이페이지</a>
-            <router-link to="/board">게시판</router-link> <!-- 게시판 링크 추가 -->
-            <router-link to="/patch-notes">패치 노트</router-link> <!-- 새로운 패치 노트 링크 추가 -->
+            <div class="nav-button" @click="mypageopen = true">마이페이지</div>
+            <div class="nav-button" @click="$router.push('/board')">게시판</div>
+            <div class="nav-button" @click="$router.push('/patch-notes')">패치 노트</div> 
             <div class="modal-overlay" v-if="mypageopen == true">
               <div class="modal-content">
                 <!-- 프로필 이미지 -->
@@ -121,8 +121,8 @@
                 <button class="close-button" @click="mypageopen = false">닫기</button>
               </div>
             </div>
-            <a href="/mypage-edit">내 정보 변경</a>
-            <a @click="logout()">로그아웃</a>
+              <div class="nav-button" @click="$router.push('/mypage-edit')">내 정보 변경</div>
+              <div class="nav-button" @click="logout()">로그아웃</div>
           </nav>
         </div>
       </template>
@@ -136,9 +136,9 @@
             <span>Welcome</span>
           </div>
           <nav class="nav-links">
-            <a href="#">공지</a>
-            <router-link to="/signup">회원가입</router-link>
-            <router-link to="/login">로그인</router-link>
+            <div class="nav-button" @click="$router.push('/patch-notes')">패치 노트</div>
+            <div class="nav-button" @click="$router.push('/signup')">회원가입</div>
+            <div class="nav-button" @click="$router.push('/login')">로그인</div>
           </nav>
         </div>
       </template>
@@ -352,6 +352,7 @@ body {
   padding: 15px 20px;
   background-color: #424242;
   color: #FAFAFA;
+  height: 50px;
 }
 
 .logo {
@@ -365,6 +366,30 @@ body {
   height: 20px;
   border-radius: 50%;
   background-color: #15513775;
+}
+
+.nav-links {
+  display: flex;
+  align-items: stretch;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  width: 100px;
+  padding: 0 16px;
+  background-color: transparent;
+  color: #FAFAFA;
+  border-radius: 0;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.nav-button:hover {
+  background-color: #212121;
 }
 
 .nav-links a,
@@ -434,7 +459,7 @@ body {
 .modal-content {
   background-color: #2a2a2a;
   color: white;
-  width: 80%;
+  width: 0%;
   max-width: 500px;
   padding: 20px;
   border-radius: 8px;
