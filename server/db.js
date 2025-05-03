@@ -233,7 +233,7 @@ async function ChangeUserprofile(userprofile) {
                 birthdate: userprofile.birthdate,
                 gender: userprofile.gender,
                 email: userprofile.email,
-                introduction: userprofile.introdution
+                introduction: userprofile.introduction
             }
         }
     );
