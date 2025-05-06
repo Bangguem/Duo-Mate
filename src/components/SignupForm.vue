@@ -92,10 +92,10 @@
           <h2>회원가입 완료!</h2>
           <p>라이엇 계정 연동을 진행해주세요.</p>
           <br />
-          <button @click="handleGoToRiotLink">연동하러 가기</button>
+          <button @click="$router.push('/riot-connect')">연동하러 가기</button>
         </div>
       </div>
-      <div v-if="showRiotModal == true" class="modal">
+      <!-- <div v-if="showRiotModal == true" class="modal">
         <div class="modal-content">
           <h2>Riot 연동</h2>
           <p>회원가입이 완료되었습니다! 라이엇 계정을 연동해주세요.</p>
@@ -105,7 +105,7 @@
           <input type="text" v-model="tag" placeholder="태그 입력 (예: KR1)" />
           <button type="button" @click="linkRiotAccount">연동하기</button>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -150,10 +150,6 @@ export default {
       } else if (nextStep === 5 && this.form.email.includes('@')) {
         this.formStep = Math.max(this.formStep, 5);
       }
-    },
-    handleGoToRiotLink() {
-      this.signupSuccessModal = false;
-      this.showRiotModal = true;
     },
 
     async linkRiotAccount() {
@@ -262,13 +258,13 @@ export default {
         const response = await fetch(`${process.env.VUE_APP_API_URL}/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify(this.form),
         });
 
         const result = await response.json();
         if (response.ok) {
-          this.signupSuccessModal = true; // 모달 표시
-          // this.showRiotModal = true; → 이건 모달 닫을 때 띄우도록 
+          this.$router.push('/riot-connect');
         } else {
           alert(result.message);
         }
