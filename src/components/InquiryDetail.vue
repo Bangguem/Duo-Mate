@@ -1,22 +1,24 @@
 <template>
-  <div class="inquiry-detail" v-if="inquiry">
-    <h2>{{ inquiry.title }}</h2>
-    <p><strong>작성자:</strong> {{ inquiry.name }}</p>
-    <p><strong>작성일:</strong> {{ formatDate(inquiry.createdAt) }}</p>
-    <p><strong>내용:</strong></p>
-    <p class="preserve-newlines">{{ inquiry.content }}</p>
+  <div id="app">
+    <div class="inquiry-detail" v-if="inquiry">
+      <h2>{{ inquiry.title }}</h2>
+      <p><strong>작성자:</strong> {{ inquiry.name }}</p>
+      <p><strong>작성일:</strong> {{ formatDate(inquiry.createdAt) }}</p>
+      <p><strong>내용:</strong></p>
+      <p class="preserve-newlines">{{ inquiry.content }}</p>
 
-    <div v-if="inquiry.answer">
-      <hr />
-      <h3>💬 관리자 답변</h3>
-      <p class="preserve-newlines">{{ inquiry.answer }}</p>
-    </div>
+      <div v-if="inquiry.answer">
+        <hr />
+        <h3>💬 관리자 답변</h3>
+        <p class="preserve-newlines">{{ inquiry.answer }}</p>
+      </div>
 
-    <div v-else-if="isAdmin">
-      <hr />
-      <h3>🛠 답변 작성</h3>
-      <textarea v-model="answer" rows="5" style="width: 100%;"></textarea>
-      <button @click="submitAnswer">답변 등록</button>
+      <div v-else-if="isAdmin">
+        <hr />
+        <h3>🛠 답변 작성</h3>
+        <textarea v-model="answer" rows="5" style="width: 100%;"></textarea>
+        <button @click="submitAnswer">답변 등록</button>
+      </div>
     </div>
   </div>
 </template>
@@ -88,21 +90,49 @@ export default {
 </script>
 
 <style scoped>
+#app {
+  display: flex;
+  justify-content: center;   /* 가로 중앙 */
+  align-items: center;       /* 세로 중앙 */
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(33, 33, 33);
+}
 .preserve-newlines {
   white-space: pre-wrap;
 }
 
 .inquiry-detail {
-  max-width: 700px;
-  margin: 0 auto;
+  background: #333;                              /* 카드 배경 */
+  padding: 24px;                                 /* 내부 여백 */
+  border-radius: 12px;                           /* 둥근 모서리 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);      /* 그림자 */
+  max-width: 700px;                              /* 너비 제한 */
+  width: 100%;                                   /* 반응형 */
+  color: white;                                  /* 텍스트 흰색 */
 }
 
 textarea {
-  margin-top: 0.5rem;
+  width: 100%;
+  padding: 10px;
+  background: #444;                              /* 짙은 배경 */
+  border: none;
+  border-radius: 6px;
+  color: white;
+  margin-bottom: 16px;
 }
 
 button {
-  margin-top: 0.5rem;
-  padding: 0.5rem 1rem;
+  background: #42b983;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background: #36a372;
 }
 </style>
