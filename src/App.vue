@@ -13,6 +13,12 @@
           </div>
           <nav class="nav-links">
             <!-- <a v-if="userInfo.nickname"><strong>닉네임:</strong> {{ userInfo.nickname }}</a> -->
+            <div class="nav-button" v-if="$route.path.startsWith('/board') || 
+            $route.path.startsWith('/notices') ||
+            $route.path.startsWith('/patch-notes') ||
+            $route.path.startsWith('/updates') ||
+            $route.path.startsWith('/inquiries')"
+            @click="$router.push('/')">홈</div>
             <div class="nav-button" @click="mypageopen = true">마이페이지</div>
             <div class="nav-button" @click="$router.push('/board')">게시판</div>
             <div class="nav-button" @click="$router.push('/notices')">공지사항</div>
@@ -197,17 +203,7 @@ export default {
   computed: {
     // 로그인, 회원가입 페이지 여부 확인
     isAuthPage() {
-      const path = this.$route.path;
-      const authPaths = [
-        '/login', '/signup', '/find-password', '/find-id', '/mypage-edit', '/matchqueue', '/chatroom', 
-        '/board', '/notices', '/patch-notes', '/updates', '/inquiries'
-      ];
-      return (
-        authPaths.includes(path) ||
-        path.startsWith('/board/') ||
-        path.startsWith('/updates/') ||
-        path.startsWith('/inquiries/')
-      );
+      return ['/login', '/signup', '/find-password', '/find-id', '/mypage-edit', '/matchqueue', '/chatroom'].includes(this.$route.path);
     },
     // 헤더와 푸터 표시 여부
     isMobile() {
@@ -221,7 +217,14 @@ export default {
     },
     // 메인 페이지의 플레이스홀더 표시 여부
     showPlaceholder() {
-      return !this.isAuthPage;
+      return (
+        !this.isAuthPage &&
+        !this.$route.path.startsWith('/board') &&
+        !this.$route.path.startsWith('/notices') &&
+        !this.$route.path.startsWith('/patch-notes') &&
+        !this.$route.path.startsWith('/updates') &&
+        !this.$route.path.startsWith('/inquiries')
+      );
     },
     videoElement() {
       return this.$refs.videoElement;
