@@ -15,7 +15,7 @@
             <!-- <a v-if="userInfo.nickname"><strong>닉네임:</strong> {{ userInfo.nickname }}</a> -->
             <div class="nav-button" @click="mypageopen = true">마이페이지</div>
             <div class="nav-button" @click="$router.push('/board')">게시판</div>
-            <div class="nav-button" @click="$router.push('/patch-notes')">패치 노트</div>
+            <div class="nav-button" @click="$router.push('/notices')">공지사항</div>
             <div class="modal-overlay" v-if="mypageopen == true">
               <div class="modal-content">
                 <!-- 프로필 이미지 -->
@@ -197,7 +197,17 @@ export default {
   computed: {
     // 로그인, 회원가입 페이지 여부 확인
     isAuthPage() {
-      return ['/login', '/signup', '/find-password', '/find-id', '/mypage-edit', '/matchqueue', '/chatroom', '/board', '/patch-notes'].includes(this.$route.path);
+      const path = this.$route.path;
+      const authPaths = [
+        '/login', '/signup', '/find-password', '/find-id', '/mypage-edit', '/matchqueue', '/chatroom', 
+        '/board', '/notices', '/patch-notes', '/updates', '/inquiries'
+      ];
+      return (
+        authPaths.includes(path) ||
+        path.startsWith('/board/') ||
+        path.startsWith('/updates/') ||
+        path.startsWith('/inquiries/')
+      );
     },
     // 헤더와 푸터 표시 여부
     isMobile() {
