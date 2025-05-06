@@ -271,6 +271,9 @@ export default {
 
 <style scoped>
 #app {
+  display: flex;
+  justify-content: center;  /* 가로 중앙 */
+  align-items: center;      /* 세로 중앙 */
   width: 100%;
   min-height: 100vh;
   background-color: rgb(33, 33, 33);
