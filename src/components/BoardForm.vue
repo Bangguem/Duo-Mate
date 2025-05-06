@@ -1,91 +1,93 @@
 <template>
-  <div class="contents">
-    <!-- [1] 게시글 목록(검색/정렬/작성 버튼 포함) 영역 -->
-    <section class="contents-header" v-if="currentPage === 'board'">
-      <div class="header-left">
-        <!-- 정렬 방식 선택 -->
-        <div class="select-wrapper">
-          <select id="sort" v-model="sortOrder" @change="sortPosts" class="filter-dropdown">
-            <option value="latest">최신순</option>
-            <option value="oldest">오래된순</option>
-            <option value="likes">좋아요순</option>
-            <option value="views">조회수순</option>
-          </select>
-        </div>
-
-        <!-- 검색 조건 선택 -->
-        <div class="select-wrapper">
-          <select v-model="searchType" class="filter-dropdown">
-            <option value="title">제목</option>
-            <option value="content">내용</option>
-            <option value="author">등록자명</option>
-          </select>
-        </div>
-
-        <!-- 검색 초기화 버튼 -->
-        <button @click="resetSearch" class="reset-button">초기화</button>
-      </div>
-
-      <div class="header-right">
-        <!-- 검색 박스 -->
-        <div class="search-box">
-          <input v-model="searchQuery" @keyup.enter="filterPosts" type="text" placeholder="검색어를 입력하세요"
-            class="search-input" />
-          <span class="search-icon" @click="filterPosts">🔍</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 게시글 작성 이동 버튼 -->
-    <div class="write-button-container" v-if="currentPage === 'board'">
-      <button @click="goToWritePage" class="write-button">게시글 작성</button>
-    </div>
-
-    <!-- 게시글 목록 -->
-    <div v-if="currentPage === 'board'" class="feed-container">
-      <!-- 로딩/에러/게시글 목록 상태 표시 -->
-      <div v-if="loading" class="loading">로딩 중...</div>
-      <div v-else-if="error" class="error">게시글을 불러오는 데 실패했습니다.</div>
-
-      <div v-else-if="sortedPosts.length" class="feed-list">
-        <div v-for="post in sortedPosts" :key="post._id" class="feed-card">
-          <div class="feed-header">
-            <strong>{{ post.author || '작성자 없음' }}</strong>
-            <div>{{ formatDate(post.createdAt) }}</div>
-          </div>
-          <h2 class="feed-title" @click="goToDetailPage(post._id)">{{ post.title }}</h2>
-          <p class="feed-content" v-html="convertNewLinesToBreaks(post.content)"></p>
-
-          <div v-if="post.imageUrl" class="feed-image">
-            <img :src="`http://localhost:3000${post.imageUrl}`" alt="게시글 이미지" />
+  <div id="app">
+    <div class="contents">
+      <!-- [1] 게시글 목록(검색/정렬/작성 버튼 포함) 영역 -->
+      <section class="contents-header" v-if="currentPage === 'board'">
+        <div class="header-left">
+          <!-- 정렬 방식 선택 -->
+          <div class="select-wrapper">
+            <select id="sort" v-model="sortOrder" @change="sortPosts" class="filter-dropdown">
+              <option value="latest">최신순</option>
+              <option value="oldest">오래된순</option>
+              <option value="likes">좋아요순</option>
+              <option value="views">조회수순</option>
+            </select>
           </div>
 
-          <div class="feed-actions">
-            <span>👍 {{ post.likes || 0 }}</span>
-            <span style="margin-left: 10px;">👎 {{ post.dislikes || 0 }}</span>
-            <span class="view-count" style="margin-left: 10px;">조회수: {{ post.views || 0 }}</span>
+          <!-- 검색 조건 선택 -->
+          <div class="select-wrapper">
+            <select v-model="searchType" class="filter-dropdown">
+              <option value="title">제목</option>
+              <option value="content">내용</option>
+              <option value="author">등록자명</option>
+            </select>
+          </div>
+
+          <!-- 검색 초기화 버튼 -->
+          <button @click="resetSearch" class="reset-button">초기화</button>
+        </div>
+
+        <div class="header-right">
+          <!-- 검색 박스 -->
+          <div class="search-box">
+            <input v-model="searchQuery" @keyup.enter="filterPosts" type="text" placeholder="검색어를 입력하세요"
+              class="search-input" />
+            <span class="search-icon" @click="filterPosts">🔍</span>
           </div>
         </div>
+      </section>
+
+      <!-- 게시글 작성 이동 버튼 -->
+      <div class="write-button-container" v-if="currentPage === 'board'">
+        <button @click="goToWritePage" class="write-button">게시글 작성</button>
       </div>
 
-      <div v-else class="no-posts">게시글이 없습니다.</div>
-    </div>
+      <!-- 게시글 목록 -->
+      <div v-if="currentPage === 'board'" class="feed-container">
+        <!-- 로딩/에러/게시글 목록 상태 표시 -->
+        <div v-if="loading" class="loading">로딩 중...</div>
+        <div v-else-if="error" class="error">게시글을 불러오는 데 실패했습니다.</div>
 
-    <!-- 게시글 작성 폼 -->
-    <div v-if="currentPage === 'write'" class="post-form">
-      <h2 class="post-title">게시글 작성</h2>
-      <form @submit.prevent="submitPost">
-        <input v-model="title" type="text" placeholder="제목을 입력하세요" class="post-input" required />
+        <div v-else-if="sortedPosts.length" class="feed-list">
+          <div v-for="post in sortedPosts" :key="post._id" class="feed-card">
+            <div class="feed-header">
+              <strong>{{ post.author || '작성자 없음' }}</strong>
+              <div>{{ formatDate(post.createdAt) }}</div>
+            </div>
+            <h2 class="feed-title" @click="goToDetailPage(post._id)">{{ post.title }}</h2>
+            <p class="feed-content" v-html="convertNewLinesToBreaks(post.content)"></p>
 
-        <textarea v-model="content" placeholder="내용을 입력하세요" class="post-textarea" required></textarea>
+            <div v-if="post.imageUrl" class="feed-image">
+              <img :src="`http://localhost:3000${post.imageUrl}`" alt="게시글 이미지" />
+            </div>
 
-        <input type="file" @change="handleImageUpload" accept="image/*" />
-
-        <div class="post-buttons">
-          <button type="submit" class="post-submit">게시글 작성</button>
-          <button type="button" @click="goToBoardPage" class="post-cancel">취소</button>
+            <div class="feed-actions">
+              <span>👍 {{ post.likes || 0 }}</span>
+              <span style="margin-left: 10px;">👎 {{ post.dislikes || 0 }}</span>
+              <span class="view-count" style="margin-left: 10px;">조회수: {{ post.views || 0 }}</span>
+            </div>
+          </div>
         </div>
-      </form>
+
+        <div v-else class="no-posts">게시글이 없습니다.</div>
+      </div>
+
+      <!-- 게시글 작성 폼 -->
+      <div v-if="currentPage === 'write'" class="post-form">
+        <h2 class="post-title">게시글 작성</h2>
+        <form @submit.prevent="submitPost">
+          <input v-model="title" type="text" placeholder="제목을 입력하세요" class="post-input" required />
+
+          <textarea v-model="content" placeholder="내용을 입력하세요" class="post-textarea" required></textarea>
+
+          <input type="file" @change="handleImageUpload" accept="image/*" />
+
+          <div class="post-buttons">
+            <button type="submit" class="post-submit">게시글 작성</button>
+            <button type="button" @click="goToBoardPage" class="post-cancel">취소</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -268,10 +270,16 @@ export default {
 </script>
 
 <style scoped>
+#app {
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(33, 33, 33);
+}
 /* 메인 컨테이너 */
 .contents {
   width: 100%;
   max-width: 1260px;
+  margin: 0 auto;  
   display: flex;
   flex-direction: column;
   gap: 20px;

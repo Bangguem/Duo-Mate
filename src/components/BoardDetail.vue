@@ -1,130 +1,132 @@
 <template>
-  <div class="post-container">
-    <!-- [1] 게시글 로드 중/에러 상태 -->
-    <div v-if="loading" class="loading">
-      <h2>로딩 중...</h2>
-    </div>
-    <div v-else-if="!post" class="error">
-      <h2>게시글을 불러오지 못했습니다.</h2>
-    </div>
-
-    <!-- [2] 게시글이 로드되었을 때 -->
-    <div v-else class="post-card">
-      <!-- [2-1] 게시글 수정 모드 -->
-      <div v-if="isEditing">
-        <h2>게시글 수정</h2>
-        <form @submit.prevent="updatePost" class="edit-form">
-          <input v-model="editedTitle" type="text" placeholder="제목을 입력하세요" required class="input-field" />
-          <textarea v-model="editedContent" placeholder="내용을 입력하세요" required class="textarea-field"></textarea>
-
-          <!-- 파일 첨부 입력 추가 -->
-          <input type="file" @change="handleEditImageUpload" accept="image/*" />
-
-          <div class="form-buttons">
-            <button type="submit" class="save-btn">수정 완료</button>
-            <button type="button" @click="cancelEdit" class="cancel-btn">취소</button>
-          </div>
-        </form>
+  <div id="app">
+    <div class="post-container">
+      <!-- [1] 게시글 로드 중/에러 상태 -->
+      <div v-if="loading" class="loading">
+        <h2>로딩 중...</h2>
+      </div>
+      <div v-else-if="!post" class="error">
+        <h2>게시글을 불러오지 못했습니다.</h2>
       </div>
 
-      <!-- [2-2] 게시글 일반 보기 모드 -->
-      <div v-else>
-        <!-- 제목/작성자/조회수 영역 -->
-        <div class="post-header">
-          <h1>{{ post.title }}</h1>
-          <div class="post-meta">
-            <span>작성자: <strong>{{ post.author || '익명' }}</strong></span>
-            <span>작성일: {{ formatDate(post.createdAt) }}</span>
-            <span>조회수: {{ post.views || 0 }}</span>
-          </div>
-        </div>
+      <!-- [2] 게시글이 로드되었을 때 -->
+      <div v-else class="post-card">
+        <!-- [2-1] 게시글 수정 모드 -->
+        <div v-if="isEditing">
+          <h2>게시글 수정</h2>
+          <form @submit.prevent="updatePost" class="edit-form">
+            <input v-model="editedTitle" type="text" placeholder="제목을 입력하세요" required class="input-field" />
+            <textarea v-model="editedContent" placeholder="내용을 입력하세요" required class="textarea-field"></textarea>
 
-        <!-- 게시글 본문 -->
-        <p class="post-content" v-html="convertNewLinesToBreaks(post.content)"></p>
+            <!-- 파일 첨부 입력 추가 -->
+            <input type="file" @change="handleEditImageUpload" accept="image/*" />
 
-        <!-- 이미지가 있을 경우 보여주기 -->
-        <div v-if="post.imageUrl" class="post-image">
-          <img :src="`${process.env.VUE_APP_API_URL}${post.imageUrl}?t=${new Date().getTime()}`" alt="게시글 이미지" />
-        </div>
-
-        <!-- 좋아요/싫어요 -->
-        <div class="action-buttons">
-          <button @click="likePost" class="like-btn">
-            👍 좋아요 ({{ post.likes }})
-          </button>
-          <button @click="dislikePost" class="like-btn" style="margin-left:8px;">
-            👎 싫어요 ({{ post.dislikes }})
-          </button>
-        </div>
-
-        <!-- 게시글 수정/삭제 버튼 (글 작성자만) -->
-        <div v-if="isAuthor" class="edit-actions">
-          <button @click="enterEditMode" class="edit-btn">✏️ 수정</button>
-          <button @click="deletePost" class="delete-btn">🗑 삭제</button>
-        </div>
-      </div>
-
-      <!-- [3] 댓글 섹션 -->
-      <div class="comments-section" v-if="!isEditing">
-        <h3>댓글 ({{ comments.length }})</h3>
-
-        <!-- 댓글 정렬 옵션 (댓글이 1개 이상일 때만 표시) -->
-        <div v-if="comments.length > 0" style="margin-bottom: 15px;">
-          <label for="comment-sort" style="margin-right:6px;">정렬 기준:</label>
-          <select id="comment-sort" v-model="sortOrder" @change="sortComments"
-            style="border-radius:5px; background:#444; color:white; border:none; padding:4px 8px;">
-            <option value="latest">최신순</option>
-            <option value="oldest">오래된순</option>
-            <option value="likes">좋아요순</option>
-          </select>
-        </div>
-
-        <!-- 댓글 작성 영역 (로그인 유저 & 수정 중 아닐 때만 보임) -->
-        <div v-if="currentUser && !isEditing" class="comment-input">
-          <textarea v-model="newComment" placeholder="댓글을 입력하세요"></textarea>
-          <button @click="submitComment" class="comment-submit">댓글 작성</button>
-        </div>
-
-        <!-- 댓글 리스트 -->
-        <ul class="comment-list">
-          <li v-for="comment in sortedComments" :key="comment._id" class="comment-item">
-            <div class="comment-header">
-              <strong>{{ comment.nickname }}</strong>
-              <span> | {{ formatDate(comment.createdAt) }}</span>
+            <div class="form-buttons">
+              <button type="submit" class="save-btn">수정 완료</button>
+              <button type="button" @click="cancelEdit" class="cancel-btn">취소</button>
             </div>
+          </form>
+        </div>
 
-            <!-- 댓글 수정 모드 -->
-            <div v-if="editingCommentId === comment._id">
-              <textarea v-model="editingContent" class="textarea-field"></textarea>
-              <div class="comment-actions">
-                <button @click="saveEditedComment(comment._id)" class="save-btn">
-                  저장
-                </button>
-                <button @click="cancelEditing" class="cancel-btn">취소</button>
+        <!-- [2-2] 게시글 일반 보기 모드 -->
+        <div v-else>
+          <!-- 제목/작성자/조회수 영역 -->
+          <div class="post-header">
+            <h1>{{ post.title }}</h1>
+            <div class="post-meta">
+              <span>작성자: <strong>{{ post.author || '익명' }}</strong></span>
+              <span>작성일: {{ formatDate(post.createdAt) }}</span>
+              <span>조회수: {{ post.views || 0 }}</span>
+            </div>
+          </div>
+
+          <!-- 게시글 본문 -->
+          <p class="post-content" v-html="convertNewLinesToBreaks(post.content)"></p>
+
+          <!-- 이미지가 있을 경우 보여주기 -->
+          <div v-if="post.imageUrl" class="post-image">
+            <img :src="`${process.env.VUE_APP_API_URL}${post.imageUrl}?t=${new Date().getTime()}`" alt="게시글 이미지" />
+          </div>
+
+          <!-- 좋아요/싫어요 -->
+          <div class="action-buttons">
+            <button @click="likePost" class="like-btn">
+              👍 좋아요 ({{ post.likes }})
+            </button>
+            <button @click="dislikePost" class="like-btn" style="margin-left:8px;">
+              👎 싫어요 ({{ post.dislikes }})
+            </button>
+          </div>
+
+          <!-- 게시글 수정/삭제 버튼 (글 작성자만) -->
+          <div v-if="isAuthor" class="edit-actions">
+            <button @click="enterEditMode" class="edit-btn">✏️ 수정</button>
+            <button @click="deletePost" class="delete-btn">🗑 삭제</button>
+          </div>
+        </div>
+
+        <!-- [3] 댓글 섹션 -->
+        <div class="comments-section" v-if="!isEditing">
+          <h3>댓글 ({{ comments.length }})</h3>
+
+          <!-- 댓글 정렬 옵션 (댓글이 1개 이상일 때만 표시) -->
+          <div v-if="comments.length > 0" style="margin-bottom: 15px;">
+            <label for="comment-sort" style="margin-right:6px;">정렬 기준:</label>
+            <select id="comment-sort" v-model="sortOrder" @change="sortComments"
+              style="border-radius:5px; background:#444; color:white; border:none; padding:4px 8px;">
+              <option value="latest">최신순</option>
+              <option value="oldest">오래된순</option>
+              <option value="likes">좋아요순</option>
+            </select>
+          </div>
+
+          <!-- 댓글 작성 영역 (로그인 유저 & 수정 중 아닐 때만 보임) -->
+          <div v-if="currentUser && !isEditing" class="comment-input">
+            <textarea v-model="newComment" placeholder="댓글을 입력하세요"></textarea>
+            <button @click="submitComment" class="comment-submit">댓글 작성</button>
+          </div>
+
+          <!-- 댓글 리스트 -->
+          <ul class="comment-list">
+            <li v-for="comment in sortedComments" :key="comment._id" class="comment-item">
+              <div class="comment-header">
+                <strong>{{ comment.nickname }}</strong>
+                <span> | {{ formatDate(comment.createdAt) }}</span>
               </div>
-            </div>
 
-            <!-- 댓글 보기 모드 -->
-            <div v-else>
-              <p v-html="convertNewLinesToBreaks(comment.content)"></p>
-              <div class="comment-actions">
-                <!-- 좋아요/싫어요 -->
-                <button @click="likeComment(comment._id)" class="like-btn">
-                  👍 ({{ comment.likes || 0 }})
-                </button>
-                <button @click="dislikeComment(comment._id)" class="like-btn" style="margin-left:8px;">
-                  👎 ({{ comment.dislikes || 0 }})
-                </button>
-
-                <!-- 댓글 수정/삭제 버튼 (작성자만 노출) -->
-                <div v-if="currentUser?.userid === comment.userId" style="display:inline-block; margin-left:10px;">
-                  <button @click="startEditingComment(comment._id, comment.content)" class="edit-btn">✏️ 수정</button>
-                  <button @click="deleteComment(comment._id)" class="delete-btn">🗑 삭제</button>
+              <!-- 댓글 수정 모드 -->
+              <div v-if="editingCommentId === comment._id">
+                <textarea v-model="editingContent" class="textarea-field"></textarea>
+                <div class="comment-actions">
+                  <button @click="saveEditedComment(comment._id)" class="save-btn">
+                    저장
+                  </button>
+                  <button @click="cancelEditing" class="cancel-btn">취소</button>
                 </div>
               </div>
-            </div>
-          </li>
-        </ul>
+
+              <!-- 댓글 보기 모드 -->
+              <div v-else>
+                <p v-html="convertNewLinesToBreaks(comment.content)"></p>
+                <div class="comment-actions">
+                  <!-- 좋아요/싫어요 -->
+                  <button @click="likeComment(comment._id)" class="like-btn">
+                    👍 ({{ comment.likes || 0 }})
+                  </button>
+                  <button @click="dislikeComment(comment._id)" class="like-btn" style="margin-left:8px;">
+                    👎 ({{ comment.dislikes || 0 }})
+                  </button>
+
+                  <!-- 댓글 수정/삭제 버튼 (작성자만 노출) -->
+                  <div v-if="currentUser?.userid === comment.userId" style="display:inline-block; margin-left:10px;">
+                    <button @click="startEditingComment(comment._id, comment.content)" class="edit-btn">✏️ 수정</button>
+                    <button @click="deleteComment(comment._id)" class="delete-btn">🗑 삭제</button>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -461,10 +463,18 @@ export default {
 </script>
 
 <style scoped>
+/* ① 화면 전체를 덮는 루트 스타일 */
+#app {
+  display: flex;
+  justify-content: center;  /* 가로 중앙 정렬 */
+  align-items: center;      /* 세로 중앙 정렬 */
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(33, 33, 33);
+}
 /* 최상위 컨테이너 */
 .post-container {
   max-width: 700px;
-  margin: 40px auto;
   padding: 20px;
   background: #222;
   border-radius: 8px;
