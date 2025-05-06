@@ -1,39 +1,41 @@
 <template>
-  <div class="update-detail-container">
-    <div v-if="loading" class="loading">
-      <h2>로딩 중...</h2>
-    </div>
-    <div v-else-if="error" class="error">
-      <h2>업데이트를 불러오지 못했습니다.</h2>
-    </div>
-    <div v-else class="update-detail-card">
-      <!-- 수정 모드 -->
-      <div v-if="isEditing">
-        <h2>업데이트 수정</h2>
-        <form @submit.prevent="updateUpdate">
-          <input v-model="editedTitle" type="text" required class="input-field" placeholder="제목 입력" />
-          <textarea v-model="editedContent" required class="textarea-field" placeholder="내용 입력"></textarea>
-          <div class="form-buttons">
-            <button type="submit" class="save-btn">수정 완료</button>
-            <button type="button" @click="cancelEdit" class="cancel-btn">취소</button>
-          </div>
-        </form>
+  <div id="app">
+    <div class="update-detail-container">
+      <div v-if="loading" class="loading">
+        <h2>로딩 중...</h2>
       </div>
-
-      <!-- 보기 모드 -->
-      <div v-else>
-        <div class="update-header">
-          <h1>{{ update.title }}</h1>
-          <div class="update-meta">
-            <span>작성일: {{ formatDate(update.date) }}</span>
-          </div>
+      <div v-else-if="error" class="error">
+        <h2>업데이트를 불러오지 못했습니다.</h2>
+      </div>
+      <div v-else class="update-detail-card">
+        <!-- 수정 모드 -->
+        <div v-if="isEditing">
+          <h2>업데이트 수정</h2>
+          <form @submit.prevent="updateUpdate">
+            <input v-model="editedTitle" type="text" required class="input-field" placeholder="제목 입력" />
+            <textarea v-model="editedContent" required class="textarea-field" placeholder="내용 입력"></textarea>
+            <div class="form-buttons">
+              <button type="submit" class="save-btn">수정 완료</button>
+              <button type="button" @click="cancelEdit" class="cancel-btn">취소</button>
+            </div>
+          </form>
         </div>
-        <p class="update-content" v-html="convertNewLinesToBreaks(update.content)"></p>
 
-        <!-- ✅ Admin만 수정/삭제 버튼 표시 -->
-        <div v-if="isAdmin" class="action-buttons">
-          <button @click="enterEditMode" class="edit-btn">✏️ 수정</button>
-          <button @click="deleteUpdate" class="delete-btn">🗑 삭제</button>
+        <!-- 보기 모드 -->
+        <div v-else>
+          <div class="update-header">
+            <h1>{{ update.title }}</h1>
+            <div class="update-meta">
+              <span>작성일: {{ formatDate(update.date) }}</span>
+            </div>
+          </div>
+          <p class="update-content" v-html="convertNewLinesToBreaks(update.content)"></p>
+
+          <!-- ✅ Admin만 수정/삭제 버튼 표시 -->
+          <div v-if="isAdmin" class="action-buttons">
+            <button @click="enterEditMode" class="edit-btn">✏️ 수정</button>
+            <button @click="deleteUpdate" class="delete-btn">🗑 삭제</button>
+          </div>
         </div>
       </div>
     </div>
@@ -153,6 +155,15 @@ export default {
 </script>
 
 <style scoped>
+#app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(33, 33, 33);
+}
+
 .update-detail-container {
   max-width: 700px;
   margin: 40px auto;

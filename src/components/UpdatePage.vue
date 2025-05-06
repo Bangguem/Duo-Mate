@@ -1,55 +1,57 @@
 <template>
-  <div class="contents">
-    <!-- 목록 상단 필터 -->
-    <section class="contents-header" v-if="currentPage === 'list'">
-      <div class="header-left">
-        <button @click="sortUpdates('latest')" class="filter-button">최신순</button>
-        <button @click="sortUpdates('oldest')" class="filter-button">오래된순</button>
-      </div>
-      <div class="header-right">
-        <div class="search-box">
-          <input v-model="searchQuery" type="text" placeholder="검색" class="search-input" />
-          <span class="search-icon" @click="filterUpdates">🔍</span>
+  <div id="app">
+    <div class="contents">
+      <!-- 목록 상단 필터 -->
+      <section class="contents-header" v-if="currentPage === 'list'">
+        <div class="header-left">
+          <button @click="sortUpdates('latest')" class="filter-button">최신순</button>
+          <button @click="sortUpdates('oldest')" class="filter-button">오래된순</button>
         </div>
+        <div class="header-right">
+          <div class="search-box">
+            <input v-model="searchQuery" type="text" placeholder="검색" class="search-input" />
+            <span class="search-icon" @click="filterUpdates">🔍</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ✅ 관리자일 때만 보이는 작성 버튼 -->
+      <div class="write-button-container" v-if="currentPage === 'list' && isAdmin">
+        <button @click="goToWritePage" class="write-button">업데이트 작성</button>
       </div>
-    </section>
 
-    <!-- ✅ 관리자일 때만 보이는 작성 버튼 -->
-    <div class="write-button-container" v-if="currentPage === 'list' && isAdmin">
-      <button @click="goToWritePage" class="write-button">업데이트 작성</button>
-    </div>
-
-    <!-- 업데이트 목록 -->
-    <div v-if="currentPage === 'list'" class="feed-container">
-      <div v-if="loading" class="loading">로딩 중...</div>
-      <div v-else-if="error" class="error">업데이트를 불러오는 데 실패했습니다.</div>
-      <div v-else-if="filteredUpdates.length" class="feed-list">
-        <div v-for="update in filteredUpdates" :key="update._id" class="feed-card">
-          <div class="feed-header">
-            <img src="@/assets/icon_setting.png" alt="업데이트 아이콘" class="patch-icon" />
-            <div class="patch-info">
-              <router-link :to="{ name: 'UpdateDetail', params: { id: update._id } }" class="patch-title">
-                {{ update.title }}
-              </router-link>
-              <p class="patch-date">{{ formatDate(update.date) }}</p>
+      <!-- 업데이트 목록 -->
+      <div v-if="currentPage === 'list'" class="feed-container">
+        <div v-if="loading" class="loading">로딩 중...</div>
+        <div v-else-if="error" class="error">업데이트를 불러오는 데 실패했습니다.</div>
+        <div v-else-if="filteredUpdates.length" class="feed-list">
+          <div v-for="update in filteredUpdates" :key="update._id" class="feed-card">
+            <div class="feed-header">
+              <img src="@/assets/icon_setting.png" alt="업데이트 아이콘" class="patch-icon" />
+              <div class="patch-info">
+                <router-link :to="{ name: 'UpdateDetail', params: { id: update._id } }" class="patch-title">
+                  {{ update.title }}
+                </router-link>
+                <p class="patch-date">{{ formatDate(update.date) }}</p>
+              </div>
             </div>
           </div>
         </div>
+        <div v-else class="no-updates">업데이트가 없습니다.</div>
       </div>
-      <div v-else class="no-updates">업데이트가 없습니다.</div>
-    </div>
 
-    <!-- 업데이트 작성 폼 -->
-    <div v-if="currentPage === 'write'" class="update-form">
-      <h2>업데이트 작성</h2>
-      <form @submit.prevent="submitUpdate">
-        <input v-model="title" type="text" placeholder="제목 입력" required />
-        <textarea v-model="content" placeholder="업데이트 내용 입력" required></textarea>
-        <div class="form-buttons">
-          <button type="submit" class="submit-button">작성</button>
-          <button type="button" @click="goToListPage" class="cancel-button">취소</button>
-        </div>
-      </form>
+      <!-- 업데이트 작성 폼 -->
+      <div v-if="currentPage === 'write'" class="update-form">
+        <h2>업데이트 작성</h2>
+        <form @submit.prevent="submitUpdate">
+          <input v-model="title" type="text" placeholder="제목 입력" required />
+          <textarea v-model="content" placeholder="업데이트 내용 입력" required></textarea>
+          <div class="form-buttons">
+            <button type="submit" class="submit-button">작성</button>
+            <button type="button" @click="goToListPage" class="cancel-button">취소</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -166,6 +168,15 @@ export default {
 </script>
 
 <style scoped>
+#app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(33, 33, 33);
+}
+
 /* 기존 스타일 그대로 유지 */
 .contents {
   width: 100%;
