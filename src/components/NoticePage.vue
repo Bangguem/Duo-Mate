@@ -1,56 +1,58 @@
 <template>
-  <div class="contents">
+  <div id="app">
+    <div class="contents">
 
-    <!-- ● 패치노트 -->
-    <section class="left-grid-item">
-      <p class="section-title">패치노트</p>
-    </section>
-    <section class="right-grid-item">
-      <div class="post-item" v-for="patch in patchNotes.slice(0, 2)" :key="patch.link">
-        <img src="@/assets/icon_lol.png" alt="패치 아이콘" class="patch-icon" />
-        <div class="patch-info">
-          <a :href="patch.link" target="_blank" class="patch-title">{{ patch.title }}</a>
-          <p class="patch-date">{{ patch.date || '날짜 없음' }}</p>
-          <p class="patch-description">{{ patch.review }}</p>
+      <!-- ● 패치노트 -->
+      <section class="left-grid-item">
+        <p class="section-title">패치노트</p>
+      </section>
+      <section class="right-grid-item">
+        <div class="post-item" v-for="patch in patchNotes.slice(0, 2)" :key="patch.link">
+          <img src="@/assets/icon_lol.png" alt="패치 아이콘" class="patch-icon" />
+          <div class="patch-info">
+            <a :href="patch.link" target="_blank" class="patch-title">{{ patch.title }}</a>
+            <p class="patch-date">{{ patch.date || '날짜 없음' }}</p>
+            <p class="patch-description">{{ patch.review }}</p>
+          </div>
         </div>
-      </div>
-      <button class="more-button" @click="goToPatchNotes">더보기</button>
-    </section>
+        <button class="more-button" @click="goToPatchNotes">더보기</button>
+      </section>
 
-    <!-- ● 업데이트 -->
-    <section class="left-grid-item">
-      <p class="section-title">업데이트</p>
-    </section>
-    <section class="right-grid-item">
-      <div class="post-item" v-for="update in dynamicUpdates.slice(0, 2)" :key="update._id">
-        <img src="@/assets/icon_setting.png" alt="업데이트 아이콘" class="patch-icon" />
-        <div class="patch-info">
-          <router-link :to="{ name: 'UpdateDetail', params: { id: update._id } }" class="patch-title">
-            {{ update.title }}
-          </router-link>
-          <p class="patch-date">{{ formatDate(update.date) }}</p>
+      <!-- ● 업데이트 -->
+      <section class="left-grid-item">
+        <p class="section-title">업데이트</p>
+      </section>
+      <section class="right-grid-item">
+        <div class="post-item" v-for="update in dynamicUpdates.slice(0, 2)" :key="update._id">
+          <img src="@/assets/icon_setting.png" alt="업데이트 아이콘" class="patch-icon" />
+          <div class="patch-info">
+            <router-link :to="{ name: 'UpdateDetail', params: { id: update._id } }" class="patch-title">
+              {{ update.title }}
+            </router-link>
+            <p class="patch-date">{{ formatDate(update.date) }}</p>
+          </div>
         </div>
-      </div>
-      <button class="more-button" @click="goToUpdates">더보기</button>
-    </section>
+        <button class="more-button" @click="goToUpdates">더보기</button>
+      </section>
 
-    <!-- ● 문의내역 -->
-    <section class="left-grid-item">
-      <p class="section-title">문의내역</p>
-    </section>
-    <section class="right-grid-item">
-      <div class="post-item" v-for="inquiry in userInquiries.slice(0, 2)" :key="inquiry._id"
-        @click="goToInquiry(inquiry._id)" style="cursor: pointer;">
-        <span class="inquiry-icon">🙋🏻‍</span>
-        <div class="patch-info">
-          <p class="patch-title">{{ inquiry.title }}</p>
-          <p class="patch-date">{{ formatDate(inquiry.createdAt) }}</p>
-          <p class="patch-description">{{ inquiry.content.slice(0, 50) + '...' }}</p>
+      <!-- ● 문의내역 -->
+      <section class="left-grid-item">
+        <p class="section-title">문의내역</p>
+      </section>
+      <section class="right-grid-item">
+        <div class="post-item" v-for="inquiry in userInquiries.slice(0, 2)" :key="inquiry._id"
+          @click="goToInquiry(inquiry._id)" style="cursor: pointer;">
+          <span class="inquiry-icon">🙋🏻‍</span>
+          <div class="patch-info">
+            <p class="patch-title">{{ inquiry.title }}</p>
+            <p class="patch-date">{{ formatDate(inquiry.createdAt) }}</p>
+            <p class="patch-description">{{ inquiry.content.slice(0, 50) + '...' }}</p>
+          </div>
         </div>
-      </div>
-      <button class="more-button" @click="$router.push('/inquiries')">더보기</button>
-    </section>
+        <button class="more-button" @click="$router.push('/inquiries')">더보기</button>
+      </section>
 
+    </div>
   </div>
 </template>
 
@@ -122,6 +124,15 @@ export default {
 </script>
 
 <style scoped>
+#app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(33, 33, 33);
+}
+
 .contents {
   width: 100%;
   max-width: 1260px;

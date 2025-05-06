@@ -1,29 +1,31 @@
 <template>
-  <div class="contents">
-    <section class="contents-header">
-      <div class="header-right">
-        <div class="search-box">
-          <input v-model="searchQuery" type="text" placeholder="검색" class="search-input">
-          <span class="search-icon">🔍</span>
+  <div id="app">
+    <div class="contents">
+      <section class="contents-header">
+        <div class="header-right">
+          <div class="search-box">
+            <input v-model="searchQuery" type="text" placeholder="검색" class="search-input">
+            <span class="search-icon">🔍</span>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="patch-list">
-      <div v-if="patchNotes.length === 0">
-        <p>패치 노트를 불러오는 중...</p>
-      </div>
-      <div class="patch-item" v-for="(patch, index) in patchNotes" :key="index">
-        <img src="@/assets/icon_lol.png" alt="패치 아이콘" class="patch-icon" />
-        <div class="patch-info">
-          <a :href="patch.link" target="_blank" class="patch-title">{{ patch.title }}</a>
-          <p class="patch-review" v-if="patch.review">{{ patch.review }}</p>
-          <p class="patch-date">{{ patch.date || '날짜 없음' }}</p>
+      <section class="patch-list">
+        <div v-if="patchNotes.length === 0">
+          <p>패치 노트를 불러오는 중...</p>
         </div>
-      </div>
-    </section>
+        <div class="patch-item" v-for="(patch, index) in patchNotes" :key="index">
+          <img src="@/assets/icon_lol.png" alt="패치 아이콘" class="patch-icon" />
+          <div class="patch-info">
+            <a :href="patch.link" target="_blank" class="patch-title">{{ patch.title }}</a>
+            <p class="patch-review" v-if="patch.review">{{ patch.review }}</p>
+            <p class="patch-date">{{ patch.date || '날짜 없음' }}</p>
+          </div>
+        </div>
+      </section>
 
-    <button v-if="canLoadMore" @click="loadMore">더보기</button>
+      <button v-if="canLoadMore" @click="loadMore">더보기</button>
+    </div>
   </div>
 </template>
 
@@ -101,6 +103,15 @@ export default {
 </script>
 
 <style scoped>
+#app {
+  display: flex;
+  justify-content: center;   /* 가로 중앙 */
+  align-items: center;       /* 세로 중앙 */
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(33, 33, 33);
+}
+
 .contents {
   width: 100%;
   max-width: 1260px;
