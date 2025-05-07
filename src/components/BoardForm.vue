@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="contents">
+    <div class="contents" :class="{ centerAlign: currentPage === 'write' }">
       <!-- [1] 게시글 목록(검색/정렬/작성 버튼 포함) 영역 -->
       <section class="contents-header" v-if="currentPage === 'board'">
         <div class="header-left">
@@ -272,7 +272,7 @@ export default {
 <style scoped>
 #app {
   display: flex;
-  justify-content: center;  /* 가로 중앙 */
+  /*justify-content: center;  /* 가로 중앙 */
   align-items: center;      /* 세로 중앙 */
   width: 100%;
   min-height: 100vh;
@@ -558,4 +558,11 @@ button {
   object-fit: cover;
   /* 이미지 비율을 유지하며 전체 영역 채움 */
 }
+
+.centerAlign {
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
 </style>
