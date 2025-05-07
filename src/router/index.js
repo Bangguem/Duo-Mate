@@ -99,6 +99,9 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior() {
+    return { top: 0 }; // 항상 맨 위로 스크롤
+  },
 });
 
 async function isLoggedIn() {
