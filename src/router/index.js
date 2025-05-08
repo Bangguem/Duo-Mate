@@ -18,6 +18,7 @@ import UpdateDetail from '@/components/UpdateDetail.vue'; // 상세 페이지 �
 import InquiryForm from '@/components/InquiryForm.vue';
 import InquiryList from '@/components/InquiryList.vue';
 import InquiryDetail from '@/components/InquiryDetail.vue';
+import RiotConnect from '@/components/RiotConnect.vue';
 
 const routes = [
   {
@@ -35,6 +36,11 @@ const routes = [
   { path: '/find-password', component: FindPassword },
   { path: '/find-id', component: FindId },
   { path: '/mypage-edit', component: MypageEdit, meta: { requiresAuth: true } /* 비로그인 상태일 때 로그인 페이지로 이동 */ },
+  {
+    path: '/riot-connect',
+    name: 'RiotConnect',
+    component: RiotConnect,
+  },
   {
     path: '/board',
     name: 'BoardForm',
