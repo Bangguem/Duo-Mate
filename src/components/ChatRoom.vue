@@ -10,6 +10,11 @@
             <p class="summoner-name">@{{ getOpponent.SummonerName || "소환사 아이디 없음" }}{{ '#' + getOpponent.Tag || "" }}
             </p>
 
+            <!-- 자기소개 추가 -->
+            <p v-if="getOpponent && 'introduction' in getOpponent" class="opponent-introduction">
+                {{ getOpponent.introduction || '소개가 없습니다' }}
+            </p>
+
             <div class="opponent-position-mic-container">
                 <div v-for="(pos, index) in opponentPositions" :key="index" class="position-item">
                     <img :src="getPositionIcon(pos)" alt="포지션 아이콘" class="position-icon" />
@@ -63,18 +68,19 @@
                 <button @click="leaveRoom" class="leave-button">나가기</button>
             </div>
 
-            <div class="chat-window" ref="chatWindow">
-                <div v-for="(message, index) in messages" :key="index" class="chat-message"
-                    :class="{ 'my-message': message.username === userInfo?.nickname, 'system-message': message.type === 'system' }">
-                    <div class="message-content">
-                        <span class="message-text">{{ message.message }}</span>
-                    </div>
-                    <div class="message-meta">
-                        <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+            <div class="chat-window-wrapper">
+                <div class="chat-window" ref="chatWindow">
+                    <div v-for="(message, index) in messages" :key="index" class="chat-message"
+                        :class="{ 'my-message': message.username === userInfo?.nickname, 'system-message': message.type === 'system' }">
+                        <div class="message-content">
+                            <span class="message-text">{{ message.message }}</span>
+                        </div>
+                        <div class="message-meta">
+                            <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-
             <div class="chat-input">
                 <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="메시지를 입력하세요..." />
                 <button @click="sendMessage">전송</button>
@@ -238,7 +244,11 @@ export default {
                 const data = await res.json();
                 if (data.success) {
                     this.match = data.match;
+                    console.log('💡 this.match:', this.match);
+                    console.log('💡 getOpponent after fetch:', this.getOpponent);
                     this.setupSocket();
+                } else {
+                    console.warn('⚠️ 매칭 데이터 실패:', data);
                 }
             } catch (e) {
                 console.error("❌ 매칭 정보 가져오기 오류:", e);
@@ -326,6 +336,14 @@ export default {
     margin-top: -5px;
 }
 
+.opponent-introduction {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #ccc;
+    text-align: center;
+    word-break: keep-all;
+}
+
 /* ✅ 포지션 + 마이크 아이콘을 한 줄로 정렬 */
 .opponent-position-mic-container {
     display: flex;
@@ -363,7 +381,7 @@ export default {
 
 /* ✅ 마이크 ON 아이콘 (icons/mic-on.png) 크기 조절 */
 .mic-icon[src*="mic-on.png"] {
-    width: 35px;
+    width: 60px;
     /* 원하는 크기로 변경 */
     height: 60px;
     /* 원하는 크기로 변경 */
@@ -371,7 +389,7 @@ export default {
 
 /* ✅ 마이크 OFF 아이콘 (icons/mic-off.png) 크기 조절 */
 .mic-icon[src*="mic-off.png"] {
-    width: 45px;
+    width: 60px;
     /* 원하는 크기로 변경 */
     height: 60px;
     /* 원하는 크기로 변경 */
@@ -533,49 +551,78 @@ export default {
     border: none;
     border-radius: 45px;
     cursor: pointer;
+    margin-right: 40px;
 }
 
 /* ✅ 채팅창 내부 스크롤 */
 .chat-window {
     flex: 1;
     overflow-y: auto;
-    width: 80%;
+    width: 97%;
     max-height: 70vh;
     padding: 10px;
     overscroll-behavior: contain;
     /* 스크롤이 부모 요소로 전달되지 않도록 방지 */
 }
 
-/* ✅ 채팅 메시지 */
+.chat-window-wrapper {
+    border: 1px solid white;
+    border-radius: 30px;
+    width: 90%;
+    height: 600px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    overflow-y: auto;
+    padding: 0;
+}
+
 .chat-message {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
+    /* 세로로 배치 */
     align-items: flex-start;
+    /* 상대 메시지는 왼쪽 */
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 .my-message {
     align-items: flex-end;
+    /* 내 메시지는 오른쪽 */
 }
 
-/* ✅ 메시지 내용 */
+.chat-message:not(.my-message) {
+    justify-content: flex-start;
+    /* ✅ 왼쪽 끝 정렬 */
+}
+
 .message-content {
     background: rgb(66, 66, 66);
     padding: 10px;
     border-radius: 45px;
     max-width: 70%;
+    word-break: break-word;
 }
 
 .my-message .message-content {
     background: rgb(21, 81, 55);
     color: white;
-    padding: 10px;
-    border-radius: 45px;
+    /* ✅ 오른쪽으로 붙이기 */
+    margin-right: 0;
 }
 
-/* ✅ 메시지 시간 */
 .message-meta {
     margin-top: 4px;
+    font-size: 12px;
+    color: #666;
+    /* ✅ 아래쪽으로 고정 */
+    align-self: flex-start;
+    /* 기본: 왼쪽 정렬 */
+}
+
+.my-message .message-meta {
+    align-self: flex-end;
+    /* 내 메시지 시간은 오른쪽 */
 }
 
 .message-time {
@@ -583,31 +630,42 @@ export default {
     color: #666;
 }
 
-/* ✅ 채팅 입력창 */
 .chat-input {
     display: flex;
     width: 90%;
-    padding: 10px;
+    height: 50px;
+    /* ✅ 고정 높이 설정 */
+    padding: 0 10px;
+    /* ✅ 좌우 여백만 */
     background: rgb(66, 66, 66);
     border-radius: 45px;
     align-items: center;
+    box-sizing: border-box;
 }
 
 .chat-input input {
     flex: 1;
-    padding: 10px;
+    /* ✅ 남은 공간 다 차지 */
+    padding: 0 10px;
     background: none;
     color: white;
     border: none;
+    outline: none;
+    height: 100%;
+    /* ✅ 부모 높이에 맞춤 */
+    box-sizing: border-box;
 }
 
 .chat-input button {
-    padding: 10px 20px;
+    height: 70%;
+    /* ✅ 부모 높이의 70% */
+    padding: 0 20px;
     background: rgb(21, 81, 55);
     color: white;
     border: none;
     border-radius: 45px;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 /* ✅ 작은 화면에서도 원본 크기 유지 */
@@ -626,6 +684,29 @@ export default {
         overflow: auto;
         /* 내부 스크롤 */
     }
+}
+
+.system-message {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /* ✅ 수평 중앙 정렬 */
+    align-items: center;
+    /* ✅ 수직 방향(한 줄에서) 중앙 정렬 */
+    margin: 10px 0;
+}
+
+.system-message .message-content {
+    background: none;
+    color: #aaa;
+    font-size: 13px;
+    text-align: center;
+    padding: 0;
+    white-space: nowrap;
+    position: static;
+    /* ✅ absolute 제거, 부모 안에서 자연 정렬 */
+    transform: none;
+    left: auto;
 }
 
 /* WebKit 기반 브라우저 (Chrome, Edge, Safari 등) */

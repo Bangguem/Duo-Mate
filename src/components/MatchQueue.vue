@@ -507,12 +507,12 @@ export default {
 }
 
 .voice-options img[src*="mic-on.png"] {
-    width: 50px;
+    width: 90px;
     height: 90px;
 }
 
 .voice-options img[src*="mic-off.png"] {
-    width: 70px;
+    width: 90px;
     height: 90px;
 }
 
