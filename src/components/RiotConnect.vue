@@ -7,7 +7,7 @@
             <div class="circle">
               <img src="/favicon.ico" class="circle" @click="$router.push('/')" style="cursor: pointer;" alt="" />
             </div>
-            라이엇 계정 연동
+            <span>{{ userInfo.nickname }}</span>
           </div>
           <nav class="nav-links">
             <div class="nav-button" @click="$router.push('/')">홈</div>
@@ -33,7 +33,7 @@
             <p v-if="message" :class="success ? 'success' : 'error'">{{ message }}</p>
             <div class="button-group">
               <!-- <button type="button" class="cancel-button">취소</button> -->
-              <button type="submit" class="submit-button" @click="linkRiotAccount()">연동하기</button>
+              <button type="submit" class="submit-button" @click.prevent="linkRiotAccount()">연동하기</button>
             </div>
           </form>
         </main>
@@ -49,6 +49,7 @@
         tag: '',
         message: '',
         success: false,
+        userInfo: {},
       };
     },
     methods: {
@@ -73,7 +74,7 @@
           },
           credentials: "include",
           body: JSON.stringify({
-            userid: this.form.userid,
+            userid: this.userInfo.userid,
             summonerName: this.summonerName,
             tag: this.tag,
           }),
@@ -85,7 +86,7 @@
         if (result.success) {
           alert("라이엇 연동 완료");
           this.showRiotModal = false; // 모달 닫기
-          window.location.href = '/login';
+          window.location.href = '/';
           // Riot API 데이터 업데이트
           this.riotInfo = {
             tier: result.tier || "정보 없음",
@@ -103,7 +104,37 @@
         alert("연동 중 오류가 발생했습니다.");
       }
     },
+    async checkLoginStatus() {
+
+        try {
+        const response = await fetch(`${process.env.VUE_APP_API_URL}/auth/check-login`, {
+            method: 'GET',
+            credentials: 'include', // 쿠키 포함
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            this.isLoggedIn = data.loggedIn;
+            if (data.loggedIn) {
+            console.log("받아온 유저 정보:", data.user);
+            this.userInfo = data.user || {}; // 사용자 정보를 객체로 저장
+            }
+        } else {
+            this.resetUserData();
+        }
+        } catch (error) {
+        console.error('Error checking login status:', error);
+        this.resetUserData();
+        }
+        },
+        resetUserData() {
+        this.isLoggedIn = false;
+        this.userInfo = {}; // 사용자 정보 초기화
+        },
     },
+    mounted() {
+    this.checkLoginStatus(); // 컴포넌트가 마운트될 때 로그인 상태 확인
+  },
   };
   </script>
   
@@ -170,7 +201,7 @@
     border-radius: 50%;
     background-color: #15513775;
   }
-  
+
   .nav-links {
   display: flex;
   gap: 4px;
