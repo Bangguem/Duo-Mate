@@ -158,16 +158,20 @@ export default {
 #app {
   display: flex;
   justify-content: center;
-  align-items: center;
+  /* 세로 정렬을 위로 붙이고 싶으면 flex-start로 변경 */
+  align-items: flex-start;
   width: 100%;
-  min-height: 100vh;
+  /* min-height는 제거하거나 줄여도 됩니다 */
+  padding: 40px 0;
   background-color: rgb(33, 33, 33);
 }
 
 .update-detail-container {
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 20px;
+  /* max-width를 훨씬 크게 잡거나 없애고, 반응형으로 너비 지정 */
+  width: 90%;
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 30px;
   background: #222;
   border-radius: 8px;
   color: white;
@@ -179,8 +183,10 @@ export default {
 }
 
 .update-detail-card {
+  /* 카드 자체도 내부 여백 늘리기 */
+  width: 100%;
+  padding: 30px;
   background: #333;
-  padding: 20px;
   border-radius: 10px;
   position: relative;
 }
@@ -250,12 +256,21 @@ export default {
 
 .input-field,
 .textarea-field {
-  width: 100%;
+  /* 전체 박스보다 살짝 좁게, 최대 700px 까지 */
+  width: 90%;
+  max-width: 700px;
+  /* 위아래 간격 유지 */
+  margin: 0 auto 10px;
   padding: 10px;
-  margin-bottom: 10px;
   border: 1px solid #bbb;
   border-radius: 5px;
   background: #222;
   color: white;
+}
+
+/* textarea만 높이 키우기 */
+.textarea-field {
+  min-height: 200px;
+  resize: vertical;
 }
 </style>
