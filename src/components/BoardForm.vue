@@ -55,7 +55,7 @@
               <div>{{ formatDate(post.createdAt) }}</div>
             </div>
             <h2 class="feed-title" @click="goToDetailPage(post._id)">{{ post.title }}</h2>
-            <p class="feed-content" v-html="convertNewLinesToBreaks(post.content)"></p>
+            <!--<p class="feed-content" v-html="convertNewLinesToBreaks(post.content)"></p>-->
 
             <div v-if="post.imageUrl" class="feed-image">
               <img :src="`http://localhost:3000${post.imageUrl}`" alt="게시글 이미지" />
@@ -478,12 +478,14 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #333;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 500px;
+
+  /* 크기 및 위치를 BoardDetail.vue와 일치시킴 */
+  max-width: 700px;
   width: 100%;
   margin: 0 auto;
+  padding: 20px;
+  border-radius: 12px;
+  background: #333; /* ← 기존 색상 유지 */
 }
 
 .post-title {

@@ -475,6 +475,8 @@ export default {
 /* 최상위 컨테이너 */
 .post-container {
   max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
   padding: 20px;
   background: #222;
   border-radius: 8px;
@@ -613,7 +615,7 @@ export default {
 }
 
 .comment-input textarea {
-  width: 100%;
+  width: 80%;
   padding: 8px;
   border-radius: 5px;
   background: #555;
@@ -631,6 +633,7 @@ export default {
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
+  display: block;     /* 버튼은 무조건 아래로 내려가게 */
 }
 
 .comment-submit:hover {
