@@ -311,7 +311,8 @@ export default {
   background-color: #424242;
   padding: 20px;
   border-radius: 12px;
-  max-width: 500px;
+  max-width: 700px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -320,12 +321,22 @@ export default {
   margin-bottom: 15px;
 }
 
-.update-form input,
-.update-form textarea {
-  width: 100%;
+.update-form input {
+  width: 95%;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 8px;
+  border: none;
+  background-color: #222;
+  color: white;
+}
+
+.update-form textarea {
+  width: 95%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  min-height: 200px; /* 👈 높이만 textarea에만 적용됨 */
   border: none;
   background-color: #222;
   color: white;

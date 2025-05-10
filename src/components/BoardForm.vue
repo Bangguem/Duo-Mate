@@ -493,8 +493,7 @@ export default {
   color: white;
 }
 
-.post-input,
-.post-textarea {
+.post-input {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
@@ -506,7 +505,15 @@ export default {
 }
 
 .post-textarea {
-  min-height: 100px;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  background: #222;
+  color: white;
+  font-size: 14px;
+  min-height: 200px; /* 👈 내용 입력 칸 높이 조절 */
 }
 
 .post-buttons {
