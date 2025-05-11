@@ -55,7 +55,7 @@
               <div>{{ formatDate(post.createdAt) }}</div>
             </div>
             <h2 class="feed-title" @click="goToDetailPage(post._id)">{{ post.title }}</h2>
-            <!--<p class="feed-content" v-html="convertNewLinesToBreaks(post.content)"></p>-->
+            <p class="feed-content" v-html="convertNewLinesToBreaks(post.content)"></p>
 
             <div v-if="post.imageUrl" class="feed-image">
               <img :src="`http://localhost:3000${post.imageUrl}`" alt="게시글 이미지" />
@@ -459,6 +459,13 @@ export default {
   font-size: 14px;
   color: lightgray;
   margin: 0;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .feed-actions {
