@@ -347,7 +347,7 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  width: 140%;
+  width: 100%;
   height: 180%;
   background-color: #212121;
 }
@@ -519,12 +519,14 @@ select {
   padding: 20px 0;
   color: #FAFAFA;
   align-items: center;
+  padding-left:180px;
+  padding-right: 170px;
 }
 
 .gaming-info h2,
 .gaming-info p {
   color: #FAFAFA;
-  margin-left: 240px;
+  text-align: center;
 }
 
 .gaming-details {
@@ -537,12 +539,12 @@ select {
   text-align: center;
   align-items: center;
   align-content: center;
+  flex-wrap: wrap;
 
 }
 
 .detail-item {
   text-align: center;
-  margin-left: 250px;
 }
 
 .detail-item img {
@@ -631,7 +633,6 @@ footer {
   flex-direction: column;
   align-items: center;
   /* 내부 요소들을 수직 정렬 */
-  margin-right: 80px;
 }
 
 .champion-list {
@@ -676,7 +677,7 @@ footer {
   font-weight: bold;
   text-align: center;
   width: 100%;
-  margin-right: 240px;
+  margin: 0 auto;
 }
 
 .champion-item .mastery-icon {
