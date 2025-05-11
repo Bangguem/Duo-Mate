@@ -45,7 +45,7 @@
 
           <!-- 이미지가 있을 경우 보여주기 -->
           <div v-if="post.imageUrl" class="post-image">
-            <img :src="`${process.env.VUE_APP_API_URL}${post.imageUrl}?t=${new Date().getTime()}`" alt="게시글 이미지" />
+            <img :src="getImageUrl(post.imageUrl)" />
           </div>
 
           <!-- 좋아요/싫어요 -->
@@ -451,6 +451,9 @@ export default {
     },
     handleEditImageUpload(event) {
       this.editedImage = event.target.files[0];
+    },
+    getImageUrl(path) {
+      return `${process.env.VUE_APP_API_URL}${path}?t=${new Date().getTime()}`;
     },
   },
   created() {
