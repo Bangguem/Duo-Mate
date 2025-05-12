@@ -62,8 +62,14 @@
             </div>
 
             <div class="feed-actions">
-              <span>👍 {{ post.likes || 0 }}</span>
-              <span style="margin-left: 10px;">👎 {{ post.dislikes || 0 }}</span>
+              <span>
+                <img src="/icons/like.png" alt="좋아요" class="like-icon" />
+                {{ post.likes || 0 }}
+              </span>
+              <span style="margin-left: 10px;">
+                <img src="/icons/dislike.png" alt="싫어요" class="dislike-icon" />
+                {{ post.dislikes || 0 }}
+              </span>
               <span class="view-count" style="margin-left: 10px;">조회수: {{ post.views || 0 }}</span>
             </div>
           </div>
@@ -580,6 +586,13 @@ button {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+}
+
+.like-icon,
+.dislike-icon {
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
 }
 
 </style>
