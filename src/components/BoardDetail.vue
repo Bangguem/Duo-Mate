@@ -58,10 +58,12 @@
           <!-- 좋아요/싫어요 -->
           <div class="action-buttons">
             <button @click="likePost" class="like-btn">
-              👍 좋아요 ({{ post.likes }})
+              <img src="/icons/like.png" alt="좋아요" class="icon" />
+              좋아요 ({{ post.likes }})
             </button>
             <button @click="dislikePost" class="like-btn" style="margin-left:8px;">
-              👎 싫어요 ({{ post.dislikes }})
+              <img src="/icons/dislike.png" alt="싫어요" class="icon" />
+              싫어요 ({{ post.dislikes }})
             </button>
           </div>
 
@@ -118,10 +120,12 @@
                 <div class="comment-actions">
                   <!-- 좋아요/싫어요 -->
                   <button @click="likeComment(comment._id)" class="like-btn">
-                    👍 ({{ comment.likes || 0 }})
+                    <img src="/icons/like.png" alt="좋아요" class="icon" />
+                    ({{ comment.likes || 0 }})
                   </button>
                   <button @click="dislikeComment(comment._id)" class="like-btn" style="margin-left:8px;">
-                    👎 ({{ comment.dislikes || 0 }})
+                    <img src="/icons/dislike.png" alt="싫어요" class="icon" />
+                    ({{ comment.dislikes || 0 }})
                   </button>
 
                   <!-- 댓글 수정/삭제 버튼 (작성자만 노출) -->
@@ -708,5 +712,12 @@ export default {
   max-width: 100%;
   height: auto;
   border-radius: 8px;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
+  margin-right: 4px;
 }
 </style>
