@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{ 'center-page': currentPage === 'write' }">
     <div class="contents">
       <!-- 목록 상단 필터 -->
       <section class="contents-header" v-if="currentPage === 'list'">
@@ -173,6 +173,20 @@ export default {
   width: 100%;
   padding-top: 8px;           /* 네비바 바로 아래로 붙도록 */
   background-color: rgb(33, 33, 33);
+}
+
+/* write 모드일 때 뷰포트 중앙에 배치 */
+#app.center-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 8px);
+}
+
+/* 중앙정렬 모드에서 상하 여백 없애기 */
+#app.center-page .contents {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* 메인 컨테이너 */
