@@ -17,6 +17,13 @@
           <form @submit.prevent="updatePost" class="edit-form">
             <input v-model="editedTitle" type="text" placeholder="제목을 입력하세요" required class="input-field" />
             <textarea v-model="editedContent" placeholder="내용을 입력하세요" required class="textarea-field"></textarea>
+            <button
+              type="button"
+              class="remove-image-btn"
+              @click="confirmRemoveImage"
+            >
+              사진 삭제
+            </button>
 
             <!-- 파일 첨부 입력 추가 -->
             <input type="file" @change="handleEditImageUpload" accept="image/*" />
@@ -151,6 +158,7 @@ export default {
       editingContent: '',    // 수정 중인 댓글 내용
       sortOrder: 'latest',   // 댓글 정렬 기준
       editedImage: null, // 새 이미지 파일 저장 변수 추가
+      removeImage: false,
     };
   },
   computed: {
@@ -248,12 +256,17 @@ export default {
     // 게시글 수정 완료
     async updatePost() {
       try {
-        if (this.editedImage) {
-          // 파일이 첨부된 경우, FormData를 사용하여 전송
+          // 1) 새 이미지가 있거나, 기존 이미지를 삭제(removeImage)하려 할 때는 FormData 로 전송
+          if (this.editedImage || this.removeImage) {
           const formData = new FormData();
           formData.append('title', this.editedTitle);
           formData.append('content', this.editedContent);
-          formData.append('image', this.editedImage);
+          if (this.removeImage) {
+            formData.append('removeImage', 'true');
+          }
+          if (this.editedImage) {
+            formData.append('image', this.editedImage);
+          }
           await axios.put(`${process.env.VUE_APP_API_URL}/api/board/${this.id}`, formData, {
             withCredentials: true,
             headers: {
@@ -451,9 +464,16 @@ export default {
     },
     handleEditImageUpload(event) {
       this.editedImage = event.target.files[0];
+      this.removeImage = false;  
     },
     getImageUrl(path) {
       return `${process.env.VUE_APP_API_URL}${path}?t=${new Date().getTime()}`;
+    },
+    confirmRemoveImage() {
+      this.removeImage = true;   
+      this.editedImage = null; 
+      this.post.imageUrl = null;
+      alert('사진이 삭제되었습니다.'); // ★ 이 줄을 추가      
     },
   },
   created() {
