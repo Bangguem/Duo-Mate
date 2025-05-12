@@ -571,7 +571,8 @@ button {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;  /* ← 추가 (선택) */
   /* 이미지 비율을 유지하며 전체 영역 채움 */
 }
 
