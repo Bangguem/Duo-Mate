@@ -169,20 +169,22 @@ export default {
 
 <style scoped>
 #app {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: block;
   width: 100%;
-  min-height: 100vh;
+  padding-top: 8px;           /* 네비바 바로 아래로 붙도록 */
   background-color: rgb(33, 33, 33);
 }
 
-/* 기존 스타일 그대로 유지 */
+/* 메인 컨테이너 */
 .contents {
   width: 100%;
   max-width: 1260px;
   margin: 0 auto;
-  padding: 20px 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 4px 50px;          /* 상단 패딩 최소화 */
+  border-radius: 0.5rem;
 }
 
 .contents-header {
