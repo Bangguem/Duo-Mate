@@ -3,7 +3,7 @@
     <div class="contents">
       <!-- 1:1 문의 섹션 (문의 목록) -->
       <section class="contents-item">
-        <button @click="goToForm" class="write-btn">문의 작성</button>
+        <button v-if="!isAdmin" @click="goToForm" class="write-btn">문의 작성</button>
         <div v-if="inquiries.length === 0">문의 내역이 없습니다.</div>
         <div v-else class="feed-list">
           <div v-for="inquiry in inquiries" :key="inquiry._id" class="feed-card" @click="goToDetail(inquiry._id)">
@@ -26,12 +26,26 @@ export default {
   data() {
     return {
       inquiries: [],
+      isAdmin: false,
     };
   },
   async created() {
+    await this.checkAdmin();
     await this.fetchInquiries();
   },
   methods: {
+    async checkAdmin() {
+      try {
+        const res = await axios.get(`${process.env.VUE_APP_API_URL}/auth/check-login`, {
+          withCredentials: true,
+        });
+        console.log('로그인 정보:', res.data);
+        this.isAdmin = res.data.loggedIn && res.data.user.userid === 'Admin';
+      } catch(error) {
+        console.error('관리자 확인 실패:', error);
+      }
+    },
+
     async fetchInquiries() {
       try {
         const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/inquiries`, {
