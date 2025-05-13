@@ -16,8 +16,10 @@
       <div v-else-if="isAdmin">
         <hr />
         <h3>🛠 답변 작성</h3>
-        <textarea v-model="answer" rows="5" style="width: 100%;"></textarea>
-        <button @click="submitAnswer">답변 등록</button>
+        <div class="answer-section">
+          <textarea v-model="answer" rows="5"></textarea>
+          <button @click="submitAnswer">답변 등록</button>
+        </div>
       </div>
     </div>
   </div>
@@ -134,5 +136,10 @@ button {
 
 button:hover {
   background: #36a372;
+}
+
+.answer-section {
+  max-width: 600px; /* 👈 원하는 만큼 줄여줘 */
+  width: 100%;
 }
 </style>

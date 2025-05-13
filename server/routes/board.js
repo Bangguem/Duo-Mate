@@ -79,8 +79,8 @@ router.post('/', authenticateJWT, upload.single('image'), async (req, res) => {
     const { title, content } = req.body;
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
   
-    if (!title || !content) {
-      return res.status(400).json({ message: '제목과 내용은 필수입니다.' });
+    if (!title) {
+      return res.status(400).json({ message: '제목은 필수입니다.' });
     }
   
     if (!req.user || !req.user.nickname) {
@@ -151,15 +151,15 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
 
 router.put('/:id', authenticateJWT, upload.single('image'), async (req, res) => {
     const postId = req.params.id;
-    const { title, content } = req.body;
+    const { title, content, removeImage } = req.body;
     const newImageUrl = req.file ? `/uploads/${req.file.filename}` : null;
   
     if (!ObjectId.isValid(postId)) {
       return res.status(400).json({ message: '잘못된 게시글 ID 형식입니다.' });
     }
   
-    if (!title || (!content && !newImageUrl)) {
-      return res.status(400).json({ message: '제목은 필수이며, 내용 또는 이미지가 필요합니다.' });
+    if (!title) {
+      return res.status(400).json({ message: '제목은 필수입니다.' });
     }
   
     try {
@@ -173,7 +173,7 @@ router.put('/:id', authenticateJWT, upload.single('image'), async (req, res) => 
       }
   
       // 새 이미지가 첨부되었을 경우, 기존 이미지가 있다면 삭제
-      if (newImageUrl && post.imageUrl) {
+      if ((newImageUrl || removeImage === 'true') && post.imageUrl) {
         try {
           const oldImagePath = path.join(__dirname, '../../public', post.imageUrl);
           if (fs.existsSync(oldImagePath)) {
@@ -189,6 +189,11 @@ router.put('/:id', authenticateJWT, upload.single('image'), async (req, res) => 
       const updateData = { title, content };
       if (newImageUrl) {
         updateData.imageUrl = newImageUrl;
+      }
+      if (newImageUrl) {
+        updateData.imageUrl = newImageUrl;
+      } else if (removeImage === 'true') {
+        updateData.imageUrl = null;
       }
   
       const updatedPost = await updatePost(postId, updateData);

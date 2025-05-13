@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{ 'center-page': currentPage === 'write' }">
     <div class="contents">
       <!-- 목록 상단 필터 -->
       <section class="contents-header" v-if="currentPage === 'list'">
@@ -169,20 +169,36 @@ export default {
 
 <style scoped>
 #app {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: block;
   width: 100%;
-  min-height: 100vh;
+  padding-top: 8px;           /* 네비바 바로 아래로 붙도록 */
   background-color: rgb(33, 33, 33);
 }
 
-/* 기존 스타일 그대로 유지 */
+/* write 모드일 때 뷰포트 중앙에 배치 */
+#app.center-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 8px);
+}
+
+/* 중앙정렬 모드에서 상하 여백 없애기 */
+#app.center-page .contents {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* 메인 컨테이너 */
 .contents {
   width: 100%;
   max-width: 1260px;
   margin: 0 auto;
-  padding: 20px 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 4px 50px;          /* 상단 패딩 최소화 */
+  border-radius: 0.5rem;
 }
 
 .contents-header {
@@ -311,7 +327,8 @@ export default {
   background-color: #424242;
   padding: 20px;
   border-radius: 12px;
-  max-width: 500px;
+  max-width: 700px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -320,12 +337,22 @@ export default {
   margin-bottom: 15px;
 }
 
-.update-form input,
-.update-form textarea {
-  width: 100%;
+.update-form input {
+  width: 95%;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 8px;
+  border: none;
+  background-color: #222;
+  color: white;
+}
+
+.update-form textarea {
+  width: 95%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  min-height: 200px; /* 👈 높이만 textarea에만 적용됨 */
   border: none;
   background-color: #222;
   color: white;

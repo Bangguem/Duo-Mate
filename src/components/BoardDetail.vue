@@ -16,7 +16,14 @@
           <h2>게시글 수정</h2>
           <form @submit.prevent="updatePost" class="edit-form">
             <input v-model="editedTitle" type="text" placeholder="제목을 입력하세요" required class="input-field" />
-            <textarea v-model="editedContent" placeholder="내용을 입력하세요" required class="textarea-field"></textarea>
+            <textarea v-model="editedContent" placeholder="내용을 입력하세요" class="textarea-field"></textarea>
+            <button
+              type="button"
+              class="remove-image-btn"
+              @click="confirmRemoveImage"
+            >
+              사진 삭제
+            </button>
 
             <!-- 파일 첨부 입력 추가 -->
             <input type="file" @change="handleEditImageUpload" accept="image/*" />
@@ -45,16 +52,18 @@
 
           <!-- 이미지가 있을 경우 보여주기 -->
           <div v-if="post.imageUrl" class="post-image">
-            <img :src="`${process.env.VUE_APP_API_URL}${post.imageUrl}?t=${new Date().getTime()}`" alt="게시글 이미지" />
+            <img :src="getImageUrl(post.imageUrl)" />
           </div>
 
           <!-- 좋아요/싫어요 -->
           <div class="action-buttons">
             <button @click="likePost" class="like-btn">
-              👍 좋아요 ({{ post.likes }})
+              <img src="/icons/like.png" alt="좋아요" class="icon" />
+              좋아요 ({{ post.likes }})
             </button>
             <button @click="dislikePost" class="like-btn" style="margin-left:8px;">
-              👎 싫어요 ({{ post.dislikes }})
+              <img src="/icons/dislike.png" alt="싫어요" class="icon" />
+              싫어요 ({{ post.dislikes }})
             </button>
           </div>
 
@@ -111,10 +120,12 @@
                 <div class="comment-actions">
                   <!-- 좋아요/싫어요 -->
                   <button @click="likeComment(comment._id)" class="like-btn">
-                    👍 ({{ comment.likes || 0 }})
+                    <img src="/icons/like.png" alt="좋아요" class="icon" />
+                    ({{ comment.likes || 0 }})
                   </button>
                   <button @click="dislikeComment(comment._id)" class="like-btn" style="margin-left:8px;">
-                    👎 ({{ comment.dislikes || 0 }})
+                    <img src="/icons/dislike.png" alt="싫어요" class="icon" />
+                    ({{ comment.dislikes || 0 }})
                   </button>
 
                   <!-- 댓글 수정/삭제 버튼 (작성자만 노출) -->
@@ -151,6 +162,7 @@ export default {
       editingContent: '',    // 수정 중인 댓글 내용
       sortOrder: 'latest',   // 댓글 정렬 기준
       editedImage: null, // 새 이미지 파일 저장 변수 추가
+      removeImage: false,
     };
   },
   computed: {
@@ -248,12 +260,17 @@ export default {
     // 게시글 수정 완료
     async updatePost() {
       try {
-        if (this.editedImage) {
-          // 파일이 첨부된 경우, FormData를 사용하여 전송
+          // 1) 새 이미지가 있거나, 기존 이미지를 삭제(removeImage)하려 할 때는 FormData 로 전송
+          if (this.editedImage || this.removeImage) {
           const formData = new FormData();
           formData.append('title', this.editedTitle);
           formData.append('content', this.editedContent);
-          formData.append('image', this.editedImage);
+          if (this.removeImage) {
+            formData.append('removeImage', 'true');
+          }
+          if (this.editedImage) {
+            formData.append('image', this.editedImage);
+          }
           await axios.put(`${process.env.VUE_APP_API_URL}/api/board/${this.id}`, formData, {
             withCredentials: true,
             headers: {
@@ -451,6 +468,16 @@ export default {
     },
     handleEditImageUpload(event) {
       this.editedImage = event.target.files[0];
+      this.removeImage = false;  
+    },
+    getImageUrl(path) {
+      return `${process.env.VUE_APP_API_URL}${path}?t=${new Date().getTime()}`;
+    },
+    confirmRemoveImage() {
+      this.removeImage = true;   
+      this.editedImage = null; 
+      this.post.imageUrl = null;
+      alert('사진이 삭제되었습니다.'); // ★ 이 줄을 추가      
     },
   },
   created() {
@@ -475,6 +502,8 @@ export default {
 /* 최상위 컨테이너 */
 .post-container {
   max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
   padding: 20px;
   background: #222;
   border-radius: 8px;
@@ -613,7 +642,7 @@ export default {
 }
 
 .comment-input textarea {
-  width: 100%;
+  width: 80%;
   padding: 8px;
   border-radius: 5px;
   background: #555;
@@ -631,6 +660,7 @@ export default {
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
+  display: block;     /* 버튼은 무조건 아래로 내려가게 */
 }
 
 .comment-submit:hover {
@@ -682,5 +712,12 @@ export default {
   max-width: 100%;
   height: auto;
   border-radius: 8px;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
+  margin-right: 4px;
 }
 </style>

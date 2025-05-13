@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="contents">
+    <div class="contents" :class="{ centerAlign: currentPage === 'write' }">
       <!-- [1] 게시글 목록(검색/정렬/작성 버튼 포함) 영역 -->
       <section class="contents-header" v-if="currentPage === 'board'">
         <div class="header-left">
@@ -62,8 +62,14 @@
             </div>
 
             <div class="feed-actions">
-              <span>👍 {{ post.likes || 0 }}</span>
-              <span style="margin-left: 10px;">👎 {{ post.dislikes || 0 }}</span>
+              <span>
+                <img src="/icons/like.png" alt="좋아요" class="like-icon" />
+                {{ post.likes || 0 }}
+              </span>
+              <span style="margin-left: 10px;">
+                <img src="/icons/dislike.png" alt="싫어요" class="dislike-icon" />
+                {{ post.dislikes || 0 }}
+              </span>
               <span class="view-count" style="margin-left: 10px;">조회수: {{ post.views || 0 }}</span>
             </div>
           </div>
@@ -78,7 +84,7 @@
         <form @submit.prevent="submitPost">
           <input v-model="title" type="text" placeholder="제목을 입력하세요" class="post-input" required />
 
-          <textarea v-model="content" placeholder="내용을 입력하세요" class="post-textarea" required></textarea>
+          <textarea v-model="content" placeholder="내용을 입력하세요" class="post-textarea"></textarea>
 
           <input type="file" @change="handleImageUpload" accept="image/*" />
 
@@ -272,7 +278,7 @@ export default {
 <style scoped>
 #app {
   display: flex;
-  justify-content: center;  /* 가로 중앙 */
+  /*justify-content: center;  /* 가로 중앙 */
   align-items: center;      /* 세로 중앙 */
   width: 100%;
   min-height: 100vh;
@@ -459,6 +465,13 @@ export default {
   font-size: 14px;
   color: lightgray;
   margin: 0;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .feed-actions {
@@ -478,12 +491,14 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #333;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 500px;
+
+  /* 크기 및 위치를 BoardDetail.vue와 일치시킴 */
+  max-width: 700px;
   width: 100%;
   margin: 0 auto;
+  padding: 20px;
+  border-radius: 12px;
+  background: #333; /* ← 기존 색상 유지 */
 }
 
 .post-title {
@@ -491,8 +506,7 @@ export default {
   color: white;
 }
 
-.post-input,
-.post-textarea {
+.post-input {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
@@ -504,7 +518,15 @@ export default {
 }
 
 .post-textarea {
-  min-height: 100px;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  background: #222;
+  color: white;
+  font-size: 14px;
+  min-height: 200px; /* 👈 내용 입력 칸 높이 조절 */
 }
 
 .post-buttons {
@@ -555,7 +577,22 @@ button {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;  /* ← 추가 (선택) */
   /* 이미지 비율을 유지하며 전체 영역 채움 */
 }
+
+.centerAlign {
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.like-icon,
+.dislike-icon {
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
+}
+
 </style>
