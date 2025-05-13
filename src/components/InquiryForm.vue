@@ -2,7 +2,7 @@
   <div id="app">
     <div class="inquiry-form">
       <h2>문의 등록</h2>
-      <form @submit.prevent="submitInquiry">
+      <form @submit.prevent="submitInquiry" class="form-section">
         <div>
           <label for="title">제목</label>
           <input v-model="title" id="title" required />
@@ -140,5 +140,11 @@ textarea {
 .message {
   margin-top: 1rem;
   color: #42b983;
+}
+
+.form-section {
+  max-width: 450px; /* 👈 원하는 만큼 줄이면 됨 (400~500 추천) */
+  width: 100%;
+  margin: 0 auto;
 }
 </style>
