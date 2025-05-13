@@ -129,12 +129,11 @@ body {
 /* 헤더 스타일 */
 .header {
   width: 100%;
+  padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
   background-color: #424242;
-  color: #FAFAFA;
   height: 50px;
 }
 
@@ -150,7 +149,11 @@ body {
   border-radius: 50%;
   background-color: #15513775;
 }
-
+.nav-links {
+  display: flex;
+  gap: 4px;
+  align-items: stretch;
+}
 .nav-button {
   display: flex;
   align-items: center;
