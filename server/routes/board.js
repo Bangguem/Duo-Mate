@@ -79,8 +79,8 @@ router.post('/', authenticateJWT, upload.single('image'), async (req, res) => {
     const { title, content } = req.body;
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
   
-    if (!title || !content) {
-      return res.status(400).json({ message: '제목과 내용은 필수입니다.' });
+    if (!title) {
+      return res.status(400).json({ message: '제목은 필수입니다.' });
     }
   
     if (!req.user || !req.user.nickname) {
@@ -158,8 +158,8 @@ router.put('/:id', authenticateJWT, upload.single('image'), async (req, res) => 
       return res.status(400).json({ message: '잘못된 게시글 ID 형식입니다.' });
     }
   
-    if (!title || (!content && !newImageUrl)) {
-      return res.status(400).json({ message: '제목은 필수이며, 내용 또는 이미지가 필요합니다.' });
+    if (!title) {
+      return res.status(400).json({ message: '제목은 필수입니다.' });
     }
   
     try {

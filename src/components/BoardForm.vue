@@ -84,7 +84,7 @@
         <form @submit.prevent="submitPost">
           <input v-model="title" type="text" placeholder="제목을 입력하세요" class="post-input" required />
 
-          <textarea v-model="content" placeholder="내용을 입력하세요" class="post-textarea" required></textarea>
+          <textarea v-model="content" placeholder="내용을 입력하세요" class="post-textarea"></textarea>
 
           <input type="file" @change="handleImageUpload" accept="image/*" />
 

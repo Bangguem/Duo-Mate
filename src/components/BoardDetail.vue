@@ -16,7 +16,7 @@
           <h2>게시글 수정</h2>
           <form @submit.prevent="updatePost" class="edit-form">
             <input v-model="editedTitle" type="text" placeholder="제목을 입력하세요" required class="input-field" />
-            <textarea v-model="editedContent" placeholder="내용을 입력하세요" required class="textarea-field"></textarea>
+            <textarea v-model="editedContent" placeholder="내용을 입력하세요" class="textarea-field"></textarea>
             <button
               type="button"
               class="remove-image-btn"

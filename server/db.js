@@ -244,7 +244,7 @@ async function createPost(postData) {
     const collection = db.collection(POSTS_COLLECTION);
     const newPost = {
         title: postData.title,
-        content: postData.content,
+        content: postData.content || '',    // 내용이 없으면 빈 문자열로 처리
         author: postData.author,
         createdAt: new Date(),
         likes: 0, // 추가
