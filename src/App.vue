@@ -15,7 +15,7 @@
             <!-- <a v-if="userInfo.nickname"><strong>닉네임:</strong> {{ userInfo.nickname }}</a> -->
             <div class="nav-button" @click="mypageopen = true">마이페이지</div>
             <div class="nav-button" @click="$router.push('/board')">게시판</div>
-            <div class="nav-button" @click="$router.push('/patch-notes')">패치 노트</div>
+            <div class="nav-button" @click="$router.push('/notices')">공지사항</div>
             <div class="modal-overlay" v-if="mypageopen == true">
               <div class="modal-content">
                 <!-- 프로필 이미지 -->
@@ -197,7 +197,7 @@ export default {
   computed: {
     // 로그인, 회원가입 페이지 여부 확인
     isAuthPage() {
-      return ['/login', '/signup', '/find-password', '/find-id', '/mypage-edit', '/matchqueue', '/chatroom', '/board', '/patch-notes', '/riot-connect'].includes(this.$route.path);
+      return ['/login', '/signup', '/find-password', '/find-id', '/mypage-edit', '/matchqueue', '/chatroom', '/riot-connect'].includes(this.$route.path);
     },
     // 헤더와 푸터 표시 여부
     isMobile() {
@@ -211,7 +211,14 @@ export default {
     },
     // 메인 페이지의 플레이스홀더 표시 여부
     showPlaceholder() {
-      return !this.isAuthPage;
+      return (
+        !this.isAuthPage &&
+        !this.$route.path.startsWith('/board') &&
+        !this.$route.path.startsWith('/notices') &&
+        !this.$route.path.startsWith('/patch-notes') &&
+        !this.$route.path.startsWith('/updates') &&
+        !this.$route.path.startsWith('/inquiries')
+      );
     },
     videoElement() {
       return this.$refs.videoElement;
