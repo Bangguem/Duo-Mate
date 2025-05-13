@@ -13,6 +13,12 @@
           </div>
           <nav class="nav-links">
             <!-- <a v-if="userInfo.nickname"><strong>닉네임:</strong> {{ userInfo.nickname }}</a> -->
+            <div class="nav-button" v-if="$route.path.startsWith('/board') || 
+            $route.path.startsWith('/notices') ||
+            $route.path.startsWith('/patch-notes') ||
+            $route.path.startsWith('/updates') ||
+            $route.path.startsWith('/inquiries')"
+            @click="$router.push('/')">홈</div>
             <div class="nav-button" @click="mypageopen = true">마이페이지</div>
             <div class="nav-button" @click="$router.push('/board')">게시판</div>
             <div class="nav-button" @click="$router.push('/notices')">공지사항</div>
