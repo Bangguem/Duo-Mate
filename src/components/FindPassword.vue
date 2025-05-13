@@ -12,7 +12,6 @@
         <nav class="nav-links">
           <div class="nav-button" @click="$router.push('/')">홈</div>
           <div class="nav-button" @click="$router.push('/login')">로그인</div>
-          <div class="nav-button" @click="$router.push('/patch-notes')">패치 노트</div>
         </nav>
       </header>
 
@@ -149,6 +148,11 @@ body {
   height: 20px;
   border-radius: 50%;
   background-color: #15513775;
+}
+.nav-links {
+  display: flex;
+  gap: 4px;
+  align-items: stretch;
 }
 
 .nav-button {

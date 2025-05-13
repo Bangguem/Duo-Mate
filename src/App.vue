@@ -145,7 +145,7 @@
             <span>Welcome</span>
           </div>
           <nav class="nav-links">
-            <div class="nav-button" @click="$router.push('/patch-notes')">패치 노트</div>
+            <div class="nav-button" @click="$router.push('/notices')">공지사항</div>
             <div class="nav-button" @click="$router.push('/signup')">회원가입</div>
             <div class="nav-button" @click="$router.push('/login')">로그인</div>
           </nav>
